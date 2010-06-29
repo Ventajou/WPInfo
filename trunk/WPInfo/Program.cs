@@ -60,9 +60,9 @@ namespace Ventajou.WPInfo
                     LoadFile(parameters.LoadFile);
                     fileLoaded = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Invalid settings file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Invalid settings file.\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -221,7 +221,7 @@ namespace Ventajou.WPInfo
         public static void LoadFile(string fileName)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(ProgramSettings));
-            Stream file = new FileStream(fileName, FileMode.Open);
+            Stream file = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             Program.Settings = (ProgramSettings)serializer.Deserialize(file);
             file.Close();
         }
