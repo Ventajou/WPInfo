@@ -86,10 +86,6 @@ namespace Ventajou.WPInfo
                     }
                     catch (Exception) { }
                 }
-
-                //backgroundGraphics.Flush();
-                //backgroundGraphics.Save();
-                //backgroundGraphics.Dispose();
             }
 
             if (background != null)
@@ -109,6 +105,7 @@ namespace Ventajou.WPInfo
             _infoTextBox.Cursor = System.Windows.Forms.Cursors.Default;
             _infoTextBox.MouseDown += CloseForm;
             _infoTextBox.ContentsResized += TextBoxContentsResized;
+            _infoTextBox.DetectUrls = false;
             backgroundPictureBox.Controls.Add(_infoTextBox);
 
             _infoTextBox.Rtf = Program.SubstituteTokens();

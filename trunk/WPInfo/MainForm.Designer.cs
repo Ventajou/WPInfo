@@ -58,6 +58,10 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.ignoreTaskbarHeightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.overlaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.trySavingRelativePathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.FontComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.FontSizeComboBox = new System.Windows.Forms.ToolStripComboBox();
@@ -82,10 +86,6 @@
             this.TextColorDialog = new System.Windows.Forms.ColorDialog();
             this.SettingsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SettingsSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.imagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backgroundsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.overlaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.trySavingRelativePathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -130,7 +130,7 @@
             newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             newToolStripMenuItem.Text = "&New";
             newToolStripMenuItem.Click += new System.EventHandler(this.NewDocument);
             // 
@@ -283,6 +283,7 @@
             // LayoutRichTextBox
             // 
             this.LayoutRichTextBox.AcceptsTab = true;
+            this.LayoutRichTextBox.DetectUrls = false;
             this.LayoutRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LayoutRichTextBox.Location = new System.Drawing.Point(0, 0);
             this.LayoutRichTextBox.Name = "LayoutRichTextBox";
@@ -385,6 +386,37 @@
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.settingsToolStripMenuItem.Text = "File Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.OpenOutputSettings);
+            // 
+            // imagesToolStripMenuItem
+            // 
+            this.imagesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.backgroundsFolderToolStripMenuItem,
+            this.overlaysToolStripMenuItem,
+            this.trySavingRelativePathsToolStripMenuItem});
+            this.imagesToolStripMenuItem.Name = "imagesToolStripMenuItem";
+            this.imagesToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.imagesToolStripMenuItem.Text = "Images";
+            // 
+            // backgroundsFolderToolStripMenuItem
+            // 
+            this.backgroundsFolderToolStripMenuItem.Name = "backgroundsFolderToolStripMenuItem";
+            this.backgroundsFolderToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.backgroundsFolderToolStripMenuItem.Text = "Backgrounds Folder";
+            this.backgroundsFolderToolStripMenuItem.Click += new System.EventHandler(this.OpenBackgroundsFolderOptions);
+            // 
+            // overlaysToolStripMenuItem
+            // 
+            this.overlaysToolStripMenuItem.Name = "overlaysToolStripMenuItem";
+            this.overlaysToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.overlaysToolStripMenuItem.Text = "Overlays";
+            this.overlaysToolStripMenuItem.Click += new System.EventHandler(this.OpenOverlaysForm);
+            // 
+            // trySavingRelativePathsToolStripMenuItem
+            // 
+            this.trySavingRelativePathsToolStripMenuItem.CheckOnClick = true;
+            this.trySavingRelativePathsToolStripMenuItem.Name = "trySavingRelativePathsToolStripMenuItem";
+            this.trySavingRelativePathsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.trySavingRelativePathsToolStripMenuItem.Text = "Try Saving Relative Paths";
             // 
             // toolStrip1
             // 
@@ -630,37 +662,6 @@
             // 
             this.SettingsSaveFileDialog.DefaultExt = "wpi";
             this.SettingsSaveFileDialog.Filter = "WPInfo Files|*.wpi";
-            // 
-            // imagesToolStripMenuItem
-            // 
-            this.imagesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.backgroundsFolderToolStripMenuItem,
-            this.overlaysToolStripMenuItem,
-            this.trySavingRelativePathsToolStripMenuItem});
-            this.imagesToolStripMenuItem.Name = "imagesToolStripMenuItem";
-            this.imagesToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.imagesToolStripMenuItem.Text = "Images";
-            // 
-            // backgroundsFolderToolStripMenuItem
-            // 
-            this.backgroundsFolderToolStripMenuItem.Name = "backgroundsFolderToolStripMenuItem";
-            this.backgroundsFolderToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.backgroundsFolderToolStripMenuItem.Text = "Backgrounds Folder";
-            this.backgroundsFolderToolStripMenuItem.Click += new System.EventHandler(this.OpenBackgroundsFolderOptions);
-            // 
-            // overlaysToolStripMenuItem
-            // 
-            this.overlaysToolStripMenuItem.Name = "overlaysToolStripMenuItem";
-            this.overlaysToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.overlaysToolStripMenuItem.Text = "Overlays";
-            this.overlaysToolStripMenuItem.Click += new System.EventHandler(this.OpenOverlaysForm);
-            // 
-            // trySavingRelativePathsToolStripMenuItem
-            // 
-            this.trySavingRelativePathsToolStripMenuItem.CheckOnClick = true;
-            this.trySavingRelativePathsToolStripMenuItem.Name = "trySavingRelativePathsToolStripMenuItem";
-            this.trySavingRelativePathsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.trySavingRelativePathsToolStripMenuItem.Text = "Try Saving Relative Paths";
             // 
             // MainForm
             // 
