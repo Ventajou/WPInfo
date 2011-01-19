@@ -59,11 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackgroundsFolder.cs">
+    <Compile Include="BackgroundsFolderForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BackgroundsFolder.Designer.cs">
-      <DependentUpon>BackgroundsFolder.cs</DependentUpon>
+    <Compile Include="BackgroundsFolderForm.Designer.cs">
+      <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TestApi\Command.cs" />
     <Compile Include="TestApi\CommandLineDictionary.cs" />
@@ -98,8 +98,8 @@
     <Compile Include="Parameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="BackgroundsFolder.resx">
-      <DependentUpon>BackgroundsFolder.cs</DependentUpon>
+    <EmbeddedResource Include="BackgroundsFolderForm.resx">
+      <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HelpForm.resx">
       <DependentUpon>HelpForm.cs</DependentUpon>

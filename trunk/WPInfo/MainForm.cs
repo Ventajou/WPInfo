@@ -3,27 +3,43 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.Reflection;
 
 namespace Ventajou.WPInfo
 {
+    /// <summary>
+    /// The main program window
+    /// </summary>
     public partial class MainForm : Form
     {
+        // Reference to the form used to render the wallbpaper
         private RenderForm _renderForm;
+
+        // Name of the configuration file.
         private string _fileName;
+
+        // Path where the program executable is located.
         private string _appPath;
 
+        // Will contain the values that will replace the various tokens when the wallpaper is rendered.
         private Dictionary<string, string[]> _tokens;
+
         public MainForm()
         {
             InitializeComponent();
         }
 
         #region Event Handlers
+        /// <summary>
+        /// Called when the main form is shown.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void ShowMainForm(object sender, EventArgs e)
         {
+            // Populating the list of installed fonts.
             InstalledFontCollection fonts = new InstalledFontCollection();
 
             foreach (FontFamily fontFamily in fonts.Families)
@@ -31,6 +47,7 @@ namespace Ventajou.WPInfo
                 FontComboBox.Items.Add(fontFamily.Name);
             }
 
+            // Retrieve the available tokens and populate the toolstrip with them.
             _tokens = Program.GetTokens();
             foreach (KeyValuePair<string, string[]> token in _tokens)
             {
@@ -39,9 +56,15 @@ namespace Ventajou.WPInfo
                 TokensToolStrip.Items.Add(button);
             }
 
+            // Load configuration.
             LoadSettings();
         }
 
+        /// <summary>
+        /// Insert the clicked token in the rich text box.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void InsertToken(object sender, EventArgs e)
         {
             ToolStripButton button = sender as ToolStripButton;
@@ -275,7 +298,7 @@ namespace Ventajou.WPInfo
         #region Images Menu
         private void OpenBackgroundsFolderOptions(object sender, EventArgs e)
         {
-            using (BackgroundsFolder backgroundsFolder = new BackgroundsFolder())
+            using (BackgroundsFolderForm backgroundsFolder = new BackgroundsFolderForm())
             {
                 backgroundsFolder.ShowDialog();
             }

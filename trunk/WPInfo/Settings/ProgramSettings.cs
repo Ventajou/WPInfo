@@ -9,7 +9,7 @@ namespace Ventajou.WPInfo
     /// </summary>
     public class ProgramSettings
     {
-        public const int Margin = 10;
+        public const int Margin = 30;
 
         /// <summary>
         /// The information text
@@ -25,6 +25,16 @@ namespace Ventajou.WPInfo
         /// Background Color when no image is displayed
         /// </summary>
         public SerializableColor BackgroundColor { get; set; }
+
+        /// <summary>
+        /// Show a box under the text when a background image is displayed.
+        /// </summary>
+        public bool ShowTextBox { get; set; }
+
+        /// <summary>
+        /// Opacity level of the text box
+        /// </summary>
+        public byte TextBoxOpacity { get; set; }
 
         /// <summary>
         /// Color depth of the wallpaper file

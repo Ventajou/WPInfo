@@ -400,14 +400,14 @@
             // backgroundsFolderToolStripMenuItem
             // 
             this.backgroundsFolderToolStripMenuItem.Name = "backgroundsFolderToolStripMenuItem";
-            this.backgroundsFolderToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.backgroundsFolderToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.backgroundsFolderToolStripMenuItem.Text = "Backgrounds Folder";
             this.backgroundsFolderToolStripMenuItem.Click += new System.EventHandler(this.OpenBackgroundsFolderOptions);
             // 
             // overlaysToolStripMenuItem
             // 
             this.overlaysToolStripMenuItem.Name = "overlaysToolStripMenuItem";
-            this.overlaysToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.overlaysToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.overlaysToolStripMenuItem.Text = "Overlays";
             this.overlaysToolStripMenuItem.Click += new System.EventHandler(this.OpenOverlaysForm);
             // 
@@ -415,8 +415,8 @@
             // 
             this.trySavingRelativePathsToolStripMenuItem.CheckOnClick = true;
             this.trySavingRelativePathsToolStripMenuItem.Name = "trySavingRelativePathsToolStripMenuItem";
-            this.trySavingRelativePathsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.trySavingRelativePathsToolStripMenuItem.Text = "Try Saving Relative Paths";
+            this.trySavingRelativePathsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.trySavingRelativePathsToolStripMenuItem.Text = "Save Relative Paths";
             // 
             // toolStrip1
             // 

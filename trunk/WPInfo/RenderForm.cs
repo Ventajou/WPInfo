@@ -5,6 +5,9 @@ using System.IO;
 using System.Drawing.Imaging;
 using System.Windows.Forms.VisualStyles;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Ventajou.WPInfo
 {
@@ -13,7 +16,13 @@ namespace Ventajou.WPInfo
     /// </summary>
     public partial class RenderForm : Form
     {
+        // This control is used to render the text
         TransparentRichTextBox _infoTextBox;
+
+        // This will be the "box" behind the text
+        Panel _infoBackGround;
+
+        // Path to the executable, used to resolve relative paths
         private string _appPath;
 
         public RenderForm()
@@ -29,25 +38,34 @@ namespace Ventajou.WPInfo
         /// <param name="e"></param>
         private void FormLoaded(object sender, EventArgs e)
         {
+            // take the whole screen size
             this.Size = Screen.PrimaryScreen.Bounds.Size;
+
+            // size the background pic accordingly
             backgroundPictureBox.Bounds = Bounds;
 
+            // Get the background image
             Bitmap background = GetBackground();
 
+            // Renedering the overlays
             if (Program.Settings.Overlays.Count > 0)
             {
                 int screenWidth = Screen.PrimaryScreen.Bounds.Width;
                 int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
-                if (background == null) 
+                // We have to ensure there is a background to render to
+                if (background == null)
                 {
                     background = new Bitmap(screenWidth, screenHeight);
                 }
 
+                // Getting a graphics object to draw the overlays on
                 Graphics backgroundGraphics = Graphics.FromImage(background);
 
+                // Loop through the overlay images
                 foreach (ImageOverlay overlay in Program.Settings.Overlays)
                 {
+                    // This is not very pretty but it will keep errors from screwing up the rendering
                     try
                     {
                         using (Bitmap overlayBitmap = new Bitmap(GetRootedPath(overlay.FullPath)))
@@ -55,6 +73,7 @@ namespace Ventajou.WPInfo
                             int top = 0;
                             int left = 0;
 
+                            // Calculating the horizontal position of the overlay
                             switch (overlay.HorizontalAlignment)
                             {
                                 case HorizontalAlignment.Center:
@@ -68,6 +87,7 @@ namespace Ventajou.WPInfo
                                     break;
                             }
 
+                            // Calculating the vertical position of the overlay
                             switch (overlay.VerticalAlignment)
                             {
                                 case VerticalAlignment.Bottom:
@@ -81,21 +101,22 @@ namespace Ventajou.WPInfo
                                     break;
                             }
 
-                            backgroundGraphics.DrawImageUnscaled(overlayBitmap, left, top);
+                            // Drawing the overlay
+                            backgroundGraphics.DrawImage(overlayBitmap, left, top, overlayBitmap.Width, overlayBitmap.Height);
                         }
                     }
                     catch (Exception) { }
                 }
             }
 
+            // applying the background image
             if (background != null)
             {
                 backgroundPictureBox.Image = background;
             }
 
+            // Creating the transparent text box and adding it to the background
             _infoTextBox = new TransparentRichTextBox();
-            SuspendLayout();
-
             _infoTextBox.AcceptsTab = true;
             _infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             _infoTextBox.Name = "InfoRichTextBox";
@@ -108,7 +129,10 @@ namespace Ventajou.WPInfo
             _infoTextBox.DetectUrls = false;
             backgroundPictureBox.Controls.Add(_infoTextBox);
 
-            _infoTextBox.Rtf = Program.SubstituteTokens();
+            // fill the text box with the information text
+            SubstituteTokens();
+
+            // Setting the form's background in case no image is specified
             BackColor = Program.Settings.BackgroundColor.ToColor();
         }
 
@@ -141,6 +165,20 @@ namespace Ventajou.WPInfo
                     _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + ProgramSettings.Margin), height - (_infoTextBox.Height + ProgramSettings.Margin));
                     break;
             }
+
+            if (_infoBackGround != null)
+            {
+                // if a box has to be drawn around the info text, it needs to be resized every time the text size changes
+                Rectangle bounds = new Rectangle(
+                    _infoTextBox.Bounds.X - 10,
+                    _infoTextBox.Bounds.Y - 10,
+                    _infoTextBox.Bounds.Width + 20,
+                    _infoTextBox.Bounds.Height + 20);
+                _infoBackGround.Bounds = bounds;
+
+                // This ensures the text will be visible over the box
+                _infoTextBox.BringToFront();
+            }
         }
 
         /// <summary>
@@ -156,13 +194,104 @@ namespace Ventajou.WPInfo
         #endregion
 
         #region Helpers
+        /// <summary>
+        /// Substitutes the tokens with the correct data and renders the text.
+        /// </summary>
+        public void SubstituteTokens()
+        {
+            // RTF uses twips as measuring units. We calculate those using the main screen's DPI
+            int twipPerPixel;
+            using (Graphics g = CreateGraphics())
+            {
+                twipPerPixel = (int)(1440 / g.DpiX);
+            }
+
+            // Putting the text with tokens in the text box for calculation purpose
+            _infoTextBox.Rtf = Program.Settings.InfoText;
+
+            // retrieving the tokens and their values
+            Dictionary<string, string[]> tokens = Program.GetTokens();
+
+            // This regular expression will find tokens in the information text
+            Regex tokenRegex = new Regex("<% (?<token>.*?) %>");
+
+            // This will find the next line break after a multi value token.
+            Regex nextLineRegex = new Regex(@"(?<break>\\line|\\par)[^d]");
+
+            // Look for the first token
+            Match match = tokenRegex.Match(_infoTextBox.Rtf);
+
+            // We loop over tokens in order of appearance in the text, this ensures the indentation can be correctly calculated for multi-line values
+            while (match.Success)
+            {
+                string[] tokenValues = tokens[match.Groups[1].Value];
+
+                // If the token has more than one values, they will each be placed on a new text line
+                if (tokenValues.Length > 1)
+                {
+                    // This calculates the position of the token's first character relative to the text box.
+                    // The method uses the plain text for character index, not the RTF text
+                    Point position = _infoTextBox.GetPositionFromCharIndex(tokenRegex.Match(_infoTextBox.Text).Index);
+                    // Converting the pixel position into twips which is what RTF uses
+                    int indent = twipPerPixel * (position.X - 1);
+
+                    // Next we loop over the token values and build a string
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string value in tokenValues)
+                    {
+                        // \par closes a paragraph and \pard opens a new one, \li sets the indentation to the specified number of twips
+                        if (sb.Length > 0) sb.Append(@"\par\pard\li" + indent + " ");
+                        sb.Append(value);
+                    }
+
+                    // Get the information text length before replacing the token
+                    int oldLength = _infoTextBox.Rtf.Length;
+
+                    // Replace the token with its values
+                    _infoTextBox.Rtf = tokenRegex.Replace(_infoTextBox.Rtf, sb.ToString(), 1, match.Index);
+
+                    // Finding the next line break in order to reset the indentation, we have to look right after the newly added values
+                    Match nextLineMatch = nextLineRegex.Match(_infoTextBox.Rtf, match.Index + match.Value.Length + (_infoTextBox.Rtf.Length - oldLength));
+                    if (nextLineMatch.Success)
+                    {
+                        // If the line break is found, add a zero indentation right after it
+                        _infoTextBox.Rtf = nextLineRegex.Replace(_infoTextBox.Rtf, nextLineMatch.Groups[1].Value + @"\li0 ", 1, nextLineMatch.Index);
+                    }
+                }
+                else if (tokenValues.Length == 1)
+                {
+                    // When there is a single value, all we do is replace the token with it
+                    _infoTextBox.Rtf = tokenRegex.Replace(_infoTextBox.Rtf, tokenValues[0], 1, match.Index);
+                }
+
+                // Find the next token
+                match = tokenRegex.Match(_infoTextBox.Rtf, match.Index);
+            }
+        }
+
+        /// <summary>
+        /// Gets the background image most appropriate for the current resolution of the primary display.
+        /// </summary>
+        /// <returns></returns>
         private Bitmap GetBackground()
         {
-            if (!Program.Settings.UseBackgroundsFolder) return null;
+            // Cut it short if no folder is configured
+            if (!Program.Settings.UseBackgroundsFolder || !Directory.Exists(GetRootedPath(Program.Settings.BackgroundsFolder))) return null;
+
+            if (Program.Settings.ShowTextBox)
+            {
+                // When a box is requested behind the text, we instanciate a panel control
+                _infoBackGround = new Panel();
+                backgroundPictureBox.Controls.Add(_infoBackGround);
+
+                // setting the panel's color to that of the background and also setting the transparency
+                _infoBackGround.BackColor = Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.ToColor());
+            }
 
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
+            // Getting the list of possible background images
             string[] resourceFiles = Directory.GetFiles(GetRootedPath(Program.Settings.BackgroundsFolder));
 
             int bestWidth = int.MaxValue;
@@ -172,12 +301,16 @@ namespace Ventajou.WPInfo
             int maxHeight = 0;
             string biggestImage = null;
 
+            // looping through the files to find the best match
             foreach (string file in resourceFiles)
             {
+                // this ensure that any file that's not a bitmap will just be skipped
                 try
                 {
+                    // Loading the bitmap
                     using (Bitmap image = new Bitmap(GetRootedPath(file)))
                     {
+                        // Checking if the bitmap is the closest match
                         if (image.Width >= screenWidth && image.Height >= screenHeight)
                         {
                             if (image.Width <= bestWidth && image.Height <= bestHeight ||
@@ -189,6 +322,7 @@ namespace Ventajou.WPInfo
                             }
                         }
 
+                        // Also keeping track of the biggest bitmap, in case the screen resolution is bigger than any of the images
                         if (image.Width >= maxWidth && image.Height >= maxHeight)
                         {
                             maxWidth = image.Width;
@@ -200,14 +334,24 @@ namespace Ventajou.WPInfo
                 catch (Exception) { }
             }
 
-            if (string.IsNullOrEmpty(bestImageName)) return null;
-
+            // If no best match is found, we pick the biggest image
+            if (string.IsNullOrEmpty(bestImageName)) bestImageName = biggestImage;
             Bitmap bestImage = new Bitmap(bestImageName);
 
+            // Resizing the image to match the screen
+            //TODO: configurable resize method (tiled, zoomed, etc)
             Bitmap outputBitmap = new Bitmap(bestImage, screenWidth, screenHeight);
             return outputBitmap;
         }
 
+        /// <summary>
+        /// Gets the rooted path of a file.
+        /// </summary>
+        /// <remarks>
+        /// Used when the path given is relative to the program's executable file
+        /// </remarks>
+        /// <param name="path">The path.</param>
+        /// <returns></returns>
         public string GetRootedPath(string path)
         {
             if (Path.IsPathRooted(path)) return path;

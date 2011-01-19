@@ -145,22 +145,22 @@ namespace Ventajou.WPInfo
             return "<% " + key + " %>";
         }
 
-        public static string SubstituteTokens()
-        {
-            string returnValue = Settings.InfoText;
-            Dictionary<string, string[]> tokens = GetTokens();
-            foreach (KeyValuePair<string, string[]> pair in tokens)
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (string value in pair.Value)
-                {
-                    if (sb.Length > 0) sb.Append(", ");
-                    sb.Append(value);
-                }
-                returnValue = returnValue.Replace(WrapTokenKey(pair.Key), sb.ToString());
-            }
-            return returnValue;
-        }
+        //public static string SubstituteTokens()
+        //{
+        //    string returnValue = Settings.InfoText;
+        //    Dictionary<string, string[]> tokens = GetTokens();
+        //    foreach (KeyValuePair<string, string[]> pair in tokens)
+        //    {
+        //        StringBuilder sb = new StringBuilder();
+        //        foreach (string value in pair.Value)
+        //        {
+        //            if (sb.Length > 0) sb.Append(", ");
+        //            sb.Append(value);
+        //        }
+        //        returnValue = returnValue.Replace(WrapTokenKey(pair.Key), sb.ToString());
+        //    }
+        //    return returnValue;
+        //}
 
         public static Bitmap CaptureWindow(Form form)
         {
