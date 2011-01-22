@@ -69,7 +69,7 @@ namespace Ventajou.WPInfo
 
             if (fileLoaded && parameters.Silent)
             {
-                SetWallpaper();
+                //SetWallpaper();
             }
             else
             {
@@ -145,23 +145,6 @@ namespace Ventajou.WPInfo
             return "<% " + key + " %>";
         }
 
-        //public static string SubstituteTokens()
-        //{
-        //    string returnValue = Settings.InfoText;
-        //    Dictionary<string, string[]> tokens = GetTokens();
-        //    foreach (KeyValuePair<string, string[]> pair in tokens)
-        //    {
-        //        StringBuilder sb = new StringBuilder();
-        //        foreach (string value in pair.Value)
-        //        {
-        //            if (sb.Length > 0) sb.Append(", ");
-        //            sb.Append(value);
-        //        }
-        //        returnValue = returnValue.Replace(WrapTokenKey(pair.Key), sb.ToString());
-        //    }
-        //    return returnValue;
-        //}
-
         public static Bitmap CaptureWindow(Form form)
         {
             Bitmap bitmap = new Bitmap(form.Width, form.Height);
@@ -174,7 +157,7 @@ namespace Ventajou.WPInfo
             return bitmap;
         }
 
-        public static void SetWallpaper()
+        public static void SetWallpaper(RenderForm renderForm)
         {
             string destinationPath = string.Empty;
 
@@ -195,12 +178,16 @@ namespace Ventajou.WPInfo
             }
 
             destinationPath = Environment.ExpandEnvironmentVariables(Path.Combine(destinationPath, Settings.OutputFileName));
-
-            using (RenderForm renderForm = new RenderForm())
+            //RenderForm renderForm = new RenderForm();
+            //using (RenderForm renderForm = new RenderForm())
             {
                 // Somehow if I render the form offscreen, the background picture will not be rendered.
-                renderForm.Location = new Point(0, 0);
-                renderForm.Show();
+               // renderForm.Show();
+                //renderForm.Location = new Point(0, 0);
+               // renderForm.BringToFront();
+               // renderForm.Refresh();
+
+                
 
                 Bitmap b = CaptureWindow(renderForm);
                 b.Save(destinationPath, ImageFormat.Bmp);

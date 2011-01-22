@@ -37,7 +37,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.showBoxCheckBox = new System.Windows.Forms.CheckBox();
             this.opacityTrackBar = new System.Windows.Forms.TrackBar();
-            this.Opacity = new System.Windows.Forms.Label();
+            this.OpacityLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
@@ -116,21 +116,21 @@
             this.opacityTrackBar.TickFrequency = 20;
             this.opacityTrackBar.Value = 255;
             // 
-            // Opacity
+            // OpacityLabel
             // 
-            this.Opacity.AutoSize = true;
-            this.Opacity.Location = new System.Drawing.Point(49, 87);
-            this.Opacity.Name = "Opacity";
-            this.Opacity.Size = new System.Drawing.Size(43, 13);
-            this.Opacity.TabIndex = 8;
-            this.Opacity.Text = "Opacity";
+            this.OpacityLabel.AutoSize = true;
+            this.OpacityLabel.Location = new System.Drawing.Point(49, 87);
+            this.OpacityLabel.Name = "OpacityLabel";
+            this.OpacityLabel.Size = new System.Drawing.Size(43, 13);
+            this.OpacityLabel.TabIndex = 8;
+            this.OpacityLabel.Text = "Opacity";
             // 
             // BackgroundsFolderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(283, 175);
-            this.Controls.Add(this.Opacity);
+            this.Controls.Add(this.OpacityLabel);
             this.Controls.Add(this.opacityTrackBar);
             this.Controls.Add(this.showBoxCheckBox);
             this.Controls.Add(this.button3);
@@ -162,6 +162,6 @@
         private System.Windows.Forms.CheckBox useFolderCheckBox;
         private System.Windows.Forms.CheckBox showBoxCheckBox;
         private System.Windows.Forms.TrackBar opacityTrackBar;
-        private System.Windows.Forms.Label Opacity;
+        private System.Windows.Forms.Label OpacityLabel;
     }
 }

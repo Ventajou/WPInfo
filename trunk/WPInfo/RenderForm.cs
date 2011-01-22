@@ -19,9 +19,6 @@ namespace Ventajou.WPInfo
         // This control is used to render the text
         TransparentRichTextBox _infoTextBox;
 
-        // This will be the "box" behind the text
-        Panel _infoBackGround;
-
         // Path to the executable, used to resolve relative paths
         private string _appPath;
 
@@ -38,6 +35,8 @@ namespace Ventajou.WPInfo
         /// <param name="e"></param>
         private void FormLoaded(object sender, EventArgs e)
         {
+            Graphics backgroundGraphics = null;
+
             // take the whole screen size
             this.Size = Screen.PrimaryScreen.Bounds.Size;
 
@@ -46,6 +45,12 @@ namespace Ventajou.WPInfo
 
             // Get the background image
             Bitmap background = GetBackground();
+
+            if (background != null)
+            {
+                // Getting a graphics object to draw the overlays on
+                backgroundGraphics = Graphics.FromImage(background);
+            }
 
             // Renedering the overlays
             if (Program.Settings.Overlays.Count > 0)
@@ -58,9 +63,6 @@ namespace Ventajou.WPInfo
                 {
                     background = new Bitmap(screenWidth, screenHeight);
                 }
-
-                // Getting a graphics object to draw the overlays on
-                Graphics backgroundGraphics = Graphics.FromImage(background);
 
                 // Loop through the overlay images
                 foreach (ImageOverlay overlay in Program.Settings.Overlays)
@@ -109,12 +111,6 @@ namespace Ventajou.WPInfo
                 }
             }
 
-            // applying the background image
-            if (background != null)
-            {
-                backgroundPictureBox.Image = background;
-            }
-
             // Creating the transparent text box and adding it to the background
             _infoTextBox = new TransparentRichTextBox();
             _infoTextBox.AcceptsTab = true;
@@ -127,6 +123,7 @@ namespace Ventajou.WPInfo
             _infoTextBox.MouseDown += CloseForm;
             _infoTextBox.ContentsResized += TextBoxContentsResized;
             _infoTextBox.DetectUrls = false;
+
             backgroundPictureBox.Controls.Add(_infoTextBox);
 
             // fill the text box with the information text
@@ -134,6 +131,22 @@ namespace Ventajou.WPInfo
 
             // Setting the form's background in case no image is specified
             BackColor = Program.Settings.BackgroundColor.ToColor();
+
+            // applying the background image
+            if (background != null)
+            {
+                if (Program.Settings.ShowTextBox)
+                {
+                    backgroundGraphics.FillRectangle(
+                        new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.ToColor())),
+                         _infoTextBox.Bounds.X - 10,
+                        _infoTextBox.Bounds.Y - 10,
+                        _infoTextBox.Bounds.Width + 20,
+                        _infoTextBox.Bounds.Height + 20);
+                }
+
+                backgroundPictureBox.Image = background;
+            }
         }
 
         /// <summary>
@@ -164,20 +177,6 @@ namespace Ventajou.WPInfo
                 case ScreenPositions.BottomRight:
                     _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + ProgramSettings.Margin), height - (_infoTextBox.Height + ProgramSettings.Margin));
                     break;
-            }
-
-            if (_infoBackGround != null)
-            {
-                // if a box has to be drawn around the info text, it needs to be resized every time the text size changes
-                Rectangle bounds = new Rectangle(
-                    _infoTextBox.Bounds.X - 10,
-                    _infoTextBox.Bounds.Y - 10,
-                    _infoTextBox.Bounds.Width + 20,
-                    _infoTextBox.Bounds.Height + 20);
-                _infoBackGround.Bounds = bounds;
-
-                // This ensures the text will be visible over the box
-                _infoTextBox.BringToFront();
             }
         }
 
@@ -277,16 +276,6 @@ namespace Ventajou.WPInfo
         {
             // Cut it short if no folder is configured
             if (!Program.Settings.UseBackgroundsFolder || !Directory.Exists(GetRootedPath(Program.Settings.BackgroundsFolder))) return null;
-
-            if (Program.Settings.ShowTextBox)
-            {
-                // When a box is requested behind the text, we instanciate a panel control
-                _infoBackGround = new Panel();
-                backgroundPictureBox.Controls.Add(_infoBackGround);
-
-                // setting the panel's color to that of the background and also setting the transparency
-                _infoBackGround.BackColor = Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.ToColor());
-            }
 
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;

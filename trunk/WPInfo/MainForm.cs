@@ -197,9 +197,14 @@ namespace Ventajou.WPInfo
 
         private void SetWallpaper(object sender, EventArgs e)
         {
+            Program.Settings.InfoText = LayoutRichTextBox.Rtf;
+            _renderForm = new RenderForm();
+            _renderForm.Show();
+            _renderForm.Location = new Point(0, 0);
+
             UseWaitCursor = true;
             Program.Settings.InfoText = LayoutRichTextBox.Rtf;
-            Program.SetWallpaper();
+            Program.SetWallpaper(_renderForm);
             UseWaitCursor = false;
         }
         #endregion
@@ -306,7 +311,7 @@ namespace Ventajou.WPInfo
 
         private void OpenOverlaysForm(object sender, EventArgs e)
         {
-            using(OverlaysForm overlaysForm = new OverlaysForm())
+            using (OverlaysForm overlaysForm = new OverlaysForm())
             {
                 overlaysForm.ShowDialog();
             }
