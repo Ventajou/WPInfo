@@ -69,7 +69,7 @@ namespace Ventajou.WPInfo
 
             if (fileLoaded && parameters.Silent)
             {
-                //SetWallpaper();
+                SetWallpaper(null);
             }
             else
             {
@@ -178,22 +178,18 @@ namespace Ventajou.WPInfo
             }
 
             destinationPath = Environment.ExpandEnvironmentVariables(Path.Combine(destinationPath, Settings.OutputFileName));
-            //RenderForm renderForm = new RenderForm();
-            //using (RenderForm renderForm = new RenderForm())
+
+            if (renderForm == null)
             {
-                // Somehow if I render the form offscreen, the background picture will not be rendered.
-               // renderForm.Show();
-                //renderForm.Location = new Point(0, 0);
-               // renderForm.BringToFront();
-               // renderForm.Refresh();
-
-                
-
-                Bitmap b = CaptureWindow(renderForm);
-                b.Save(destinationPath, ImageFormat.Bmp);
-
-                renderForm.Close();
+                renderForm = new RenderForm();
+                renderForm.Show();
+                renderForm.Location = new Point(0, 0);
             }
+
+            Bitmap b = CaptureWindow(renderForm);
+            b.Save(destinationPath, ImageFormat.Bmp);
+
+            renderForm.Close();
 
 #if !DEBUG
             // I don't want to actually change the wallpaper on my dev box!
