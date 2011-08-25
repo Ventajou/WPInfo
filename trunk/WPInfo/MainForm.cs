@@ -77,19 +77,24 @@ namespace Ventajou.WPInfo
 
         private void TextBoxSelectionChanged(object sender, EventArgs e)
         {
-            //HACK: I had exceptions on Windows XP which I couldn't reproduce on my Windows 7 development box. There's probably a cleaner way to handle them though.
-            try
+            if (LayoutRichTextBox.SelectionFont != null)
             {
                 BoldToolStripButton.Checked = LayoutRichTextBox.SelectionFont.Bold;
                 ItalicToolStripButton.Checked = LayoutRichTextBox.SelectionFont.Italic;
                 UnderlineToolStripButton.Checked = LayoutRichTextBox.SelectionFont.Underline;
-
-                SetAlignmentButton(LayoutRichTextBox.SelectionAlignment);
-
                 FontComboBox.SelectedIndex = FontComboBox.FindString(LayoutRichTextBox.SelectionFont.FontFamily.Name);
                 FontSizeComboBox.SelectedIndex = FontSizeComboBox.FindString(LayoutRichTextBox.SelectionFont.SizeInPoints.ToString());
             }
-            catch (Exception) { }
+            else
+            {
+                BoldToolStripButton.Checked = false;
+                ItalicToolStripButton.Checked = false;
+                UnderlineToolStripButton.Checked = false;
+                FontComboBox.Text = string.Empty;
+                FontSizeComboBox.Text = string.Empty;
+            }
+
+            SetAlignmentButton(LayoutRichTextBox.SelectionAlignment);
         }
 
         #region Toolbar Buttons
@@ -143,38 +148,27 @@ namespace Ventajou.WPInfo
 
         private void BoldSelection(object sender, EventArgs e)
         {
-            LayoutRichTextBox.SelectionFont = new Font(LayoutRichTextBox.SelectionFont,
-                LayoutRichTextBox.SelectionFont.Style ^ FontStyle.Bold);
+            FormatSelection();
         }
 
         private void ItalicSelection(object sender, EventArgs e)
         {
-            LayoutRichTextBox.SelectionFont = new Font(LayoutRichTextBox.SelectionFont,
-                LayoutRichTextBox.SelectionFont.Style ^ FontStyle.Italic);
+            FormatSelection();
         }
 
         private void UnderlineSelection(object sender, EventArgs e)
         {
-            LayoutRichTextBox.SelectionFont = new Font(LayoutRichTextBox.SelectionFont,
-                LayoutRichTextBox.SelectionFont.Style ^ FontStyle.Underline);
+            FormatSelection();
         }
 
         private void SetFontSize(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(FontSizeComboBox.SelectedItem as string)) return;
-
-            LayoutRichTextBox.SelectionFont = new Font(LayoutRichTextBox.SelectionFont.FontFamily.Name,
-                float.Parse(FontSizeComboBox.SelectedItem as string),
-                LayoutRichTextBox.SelectionFont.Style);
+            FormatSelection();
         }
 
         private void SetFont(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(FontComboBox.SelectedItem as string)) return;
-
-            LayoutRichTextBox.SelectionFont = new Font(FontComboBox.SelectedItem as string,
-                LayoutRichTextBox.SelectionFont.Size,
-                LayoutRichTextBox.SelectionFont.Style);
+            FormatSelection();
         }
 
         private void ShowPreview(object sender, EventArgs e)
@@ -320,6 +314,23 @@ namespace Ventajou.WPInfo
         #endregion
 
         #region Helpers
+        private void FormatSelection()
+        {
+            if (string.IsNullOrEmpty(FontComboBox.SelectedItem as string)
+                || FontComboBox.SelectedItem == null
+                || FontSizeComboBox.SelectedItem == null) return;
+
+            FontStyle style = FontStyle.Regular;
+
+            if (UnderlineToolStripButton.Checked) style &= FontStyle.Underline;
+            if (BoldToolStripButton.Checked) style &= FontStyle.Bold;
+            if (ItalicToolStripButton.Checked) style &= FontStyle.Italic;
+
+            LayoutRichTextBox.SelectionFont = new Font(FontComboBox.SelectedItem as string,
+                float.Parse(FontSizeComboBox.SelectedItem as string),
+                style);
+        }
+
         private void LoadSettings()
         {
             LayoutRichTextBox.Rtf = Program.Settings.InfoText;
