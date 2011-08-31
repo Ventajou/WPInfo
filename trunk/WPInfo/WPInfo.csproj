@@ -65,6 +65,12 @@
     <Compile Include="BackgroundsFolderForm.Designer.cs">
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextMarginsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextMarginsForm.Designer.cs">
+      <DependentUpon>TextMarginsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestApi\Command.cs" />
     <Compile Include="TestApi\CommandLineDictionary.cs" />
     <Compile Include="TestApi\CommandLineParser.cs" />
@@ -120,6 +126,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RenderForm.resx">
       <DependentUpon>RenderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextMarginsForm.resx">
+      <DependentUpon>TextMarginsForm.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

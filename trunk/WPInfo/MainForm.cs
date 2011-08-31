@@ -428,5 +428,11 @@ namespace Ventajou.WPInfo
             return path;
         }
         #endregion
+
+        private void editMarginToolStripButton_Click(object sender, EventArgs e)
+        {
+            var form = new TextMarginsForm();
+            form.ShowDialog();
+        }
     }
 }

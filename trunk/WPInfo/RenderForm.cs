@@ -166,16 +166,16 @@ namespace Ventajou.WPInfo
             switch (Program.Settings.ScreenPosition)
             {
                 case ScreenPositions.TopLeft:
-                    _infoTextBox.Location = new Point(ProgramSettings.Margin, ProgramSettings.Margin);
+                    _infoTextBox.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
                     break;
                 case ScreenPositions.TopRight:
-                    _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + ProgramSettings.Margin), ProgramSettings.Margin);
+                    _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
                     break;
                 case ScreenPositions.BottomLeft:
-                    _infoTextBox.Location = new Point(ProgramSettings.Margin, height - (_infoTextBox.Height + ProgramSettings.Margin));
+                    _infoTextBox.Location = new Point(Program.Settings.HorizontalMargin, height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
                     break;
                 case ScreenPositions.BottomRight:
-                    _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + ProgramSettings.Margin), height - (_infoTextBox.Height + ProgramSettings.Margin));
+                    _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
                     break;
             }
         }

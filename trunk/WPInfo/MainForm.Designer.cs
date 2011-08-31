@@ -86,6 +86,7 @@
             this.TextColorDialog = new System.Windows.Forms.ColorDialog();
             this.SettingsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SettingsSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.editMarginToolStripButton = new System.Windows.Forms.ToolStripButton();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -209,7 +210,7 @@
             cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            cutToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            cutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             cutToolStripMenuItem.Text = "Cu&t";
             cutToolStripMenuItem.Click += new System.EventHandler(this.CutText);
             // 
@@ -219,7 +220,7 @@
             copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            copyToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             copyToolStripMenuItem.Text = "&Copy";
             copyToolStripMenuItem.Click += new System.EventHandler(this.CopyText);
             // 
@@ -229,19 +230,19 @@
             pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            pasteToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            pasteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             pasteToolStripMenuItem.Text = "&Paste";
             pasteToolStripMenuItem.Click += new System.EventHandler(this.PasteText);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(149, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            selectAllToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             selectAllToolStripMenuItem.Text = "Select &All";
             selectAllToolStripMenuItem.Click += new System.EventHandler(this.SelectAllText);
             // 
@@ -261,7 +262,7 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.LayoutRichTextBox);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(500, 451);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(625, 451);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // toolStripContainer1.LeftToolStripPanel
@@ -271,7 +272,7 @@
             this.toolStripContainer1.LeftToolStripPanel.MinimumSize = new System.Drawing.Size(150, 0);
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(650, 500);
+            this.toolStripContainer1.Size = new System.Drawing.Size(775, 500);
             this.toolStripContainer1.TabIndex = 4;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -287,7 +288,7 @@
             this.LayoutRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LayoutRichTextBox.Location = new System.Drawing.Point(0, 0);
             this.LayoutRichTextBox.Name = "LayoutRichTextBox";
-            this.LayoutRichTextBox.Size = new System.Drawing.Size(500, 451);
+            this.LayoutRichTextBox.Size = new System.Drawing.Size(625, 451);
             this.LayoutRichTextBox.TabIndex = 3;
             this.LayoutRichTextBox.Text = "";
             this.LayoutRichTextBox.SelectionChanged += new System.EventHandler(this.TextBoxSelectionChanged);
@@ -326,7 +327,7 @@
             this.imagesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(650, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(775, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -430,6 +431,7 @@
             this.BoldToolStripButton,
             this.ItalicToolStripButton,
             this.UnderlineToolStripButton,
+            this.BackGroundToolStripButton,
             this.toolStripSeparator2,
             this.AlignLeftToolStripButton,
             this.AlignCenterToolStripButton,
@@ -439,14 +441,14 @@
             this.TopRightToolStripButton,
             this.BottomLeftToolStripButton,
             this.BottomRightToolStripButton,
-            this.BackGroundToolStripButton,
+            this.editMarginToolStripButton,
             this.toolStripSeparator4,
             this.PreviewToolStripButton,
             this.toolStripSeparator10,
             toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(3, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(594, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(648, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // FontComboBox
@@ -663,11 +665,21 @@
             this.SettingsSaveFileDialog.DefaultExt = "wpi";
             this.SettingsSaveFileDialog.Filter = "WPInfo Files|*.wpi";
             // 
+            // editMarginToolStripButton
+            // 
+            this.editMarginToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.editMarginToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("editMarginToolStripButton.Image")));
+            this.editMarginToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.editMarginToolStripButton.Name = "editMarginToolStripButton";
+            this.editMarginToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.editMarginToolStripButton.Text = "Edit Margins";
+            this.editMarginToolStripButton.Click += new System.EventHandler(this.editMarginToolStripButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(650, 500);
+            this.ClientSize = new System.Drawing.Size(775, 500);
             this.Controls.Add(this.toolStripContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MainMenuStrip = this.menuStrip1;
@@ -737,6 +749,7 @@
         private System.Windows.Forms.ToolStripMenuItem backgroundsFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem overlaysToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem trySavingRelativePathsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton editMarginToolStripButton;
     }
 }
 

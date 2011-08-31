@@ -9,7 +9,15 @@ namespace Ventajou.WPInfo
     /// </summary>
     public class ProgramSettings
     {
-        public const int Margin = 30;
+        /// <summary>
+        /// Space between the text box and the vertical edge of the screen.
+        /// </summary>
+        public int HorizontalMargin { get; set; }
+
+        /// <summary>
+        /// Space between the text box and the horizontal edge of the screen.
+        /// </summary>
+        public int VerticalMargin { get; set; }
 
         /// <summary>
         /// The information text
@@ -17,12 +25,12 @@ namespace Ventajou.WPInfo
         public string InfoText { get; set; }
 
         /// <summary>
-        /// Position where the information text will be rendered
+        /// Position where the information text will be rendered.
         /// </summary>
         public ScreenPositions ScreenPosition { get; set; }
 
         /// <summary>
-        /// Background Color when no image is displayed
+        /// Background Color when no image is displayed.
         /// </summary>
         public SerializableColor BackgroundColor { get; set; }
 
@@ -92,6 +100,8 @@ namespace Ventajou.WPInfo
         /// </summary>
         public void ResetValues()
         {
+            HorizontalMargin = 30;
+            VerticalMargin = 30;
             InfoText = string.Empty;
             ScreenPosition = ScreenPositions.BottomRight;
             BackgroundColor = SerializableColor.FromColor(Color.White);
