@@ -130,10 +130,14 @@ namespace Ventajou.WPInfo
             List<string> freeSpace = new List<string>();
             foreach (DriveInfo drive in drives)
             {
-                if (drive.DriveType == DriveType.Fixed)
+                try
                 {
-                    freeSpace.Add(string.Format(@"{0}\ {1} GB free", drive.Name, (drive.AvailableFreeSpace / (1024 * 1024)).ToString("##,#")));
+                    if (drive.DriveType == DriveType.Fixed)
+                    {
+                        freeSpace.Add(string.Format(@"{0}\ {1} GB free", drive.Name, (drive.AvailableFreeSpace / (1024 * 1024)).ToString("##,#")));
+                    }
                 }
+                catch (Exception) { }
             }
             returnValue.Add("Free Space", freeSpace.ToArray());
 
