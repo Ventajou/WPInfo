@@ -322,9 +322,9 @@ namespace Ventajou.WPInfo
 
             FontStyle style = FontStyle.Regular;
 
-            if (UnderlineToolStripButton.Checked) style &= FontStyle.Underline;
-            if (BoldToolStripButton.Checked) style &= FontStyle.Bold;
-            if (ItalicToolStripButton.Checked) style &= FontStyle.Italic;
+            if (UnderlineToolStripButton.Checked) style |= FontStyle.Underline;
+            if (BoldToolStripButton.Checked) style |= FontStyle.Bold;
+            if (ItalicToolStripButton.Checked) style |= FontStyle.Italic;
 
             LayoutRichTextBox.SelectionFont = new Font(FontComboBox.SelectedItem as string,
                 float.Parse(FontSizeComboBox.SelectedItem as string),

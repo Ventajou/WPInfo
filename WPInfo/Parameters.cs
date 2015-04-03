@@ -9,6 +9,7 @@ namespace Ventajou.WPInfo
     {
         public bool Silent { get; set; }
         public string LoadFile { get; set; }
+        public string Resolution { get; set; }
         public bool Help { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using System.Drawing.Imaging;
 using System.Management;
 using Microsoft.Test.CommandLineParsing;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Ventajou.WPInfo
 {
@@ -27,6 +28,7 @@ namespace Ventajou.WPInfo
         const int SPIF_SENDWININICHANGE = 0x02;
 
         public static ProgramSettings Settings { get; set; }
+        private static Size ForcedResolution;
 
         /// <summary>
         /// The main entry point for the application.
@@ -64,6 +66,17 @@ namespace Ventajou.WPInfo
                 {
                     MessageBox.Show("Invalid settings file.\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(parameters.Resolution))
+            {
+                Regex Validator = new Regex("^\\d*x\\d*$");       // Digits x digits - Width x Height
+                if (Validator.IsMatch(parameters.Resolution))
+                {
+                    int W = Int32.Parse(parameters.Resolution.Substring(0, parameters.Resolution.IndexOf('x')));
+                    int H = Int32.Parse(parameters.Resolution.Substring(parameters.Resolution.IndexOf('x') + 1, parameters.Resolution.Length - parameters.Resolution.IndexOf('x') - 1));
+                    ForcedResolution = new System.Drawing.Size(W, H);
                 }
             }
 
@@ -185,9 +198,18 @@ namespace Ventajou.WPInfo
 
             if (renderForm == null)
             {
-                renderForm = new RenderForm();
-                renderForm.Show();
-                renderForm.Location = new Point(0, 0);
+                if (ForcedResolution != null)
+                {
+                    renderForm = new RenderForm(ForcedResolution);
+                    renderForm.Show();
+                    renderForm.Location = new Point(0, 0);
+                }
+                else
+                {
+                    renderForm = new RenderForm();
+                    renderForm.Show();
+                    renderForm.Location = new Point(0, 0);
+                }
             }
 
             Bitmap b = CaptureWindow(renderForm);

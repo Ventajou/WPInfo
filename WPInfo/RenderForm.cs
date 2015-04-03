@@ -22,9 +22,21 @@ namespace Ventajou.WPInfo
         // Path to the executable, used to resolve relative paths
         private string _appPath;
 
+        private System.Drawing.Size Resolution;
+        private bool ResolutionForced = false;
+
         public RenderForm()
         {
             InitializeComponent();
+            Resolution = Screen.PrimaryScreen.Bounds.Size;
+            ResolutionForced = false;
+        }
+
+        public RenderForm(System.Drawing.Size ForceRes)
+        {
+            InitializeComponent();
+            Resolution = ForceRes;
+            ResolutionForced = true;
         }
 
         #region Event Handlers
@@ -38,7 +50,7 @@ namespace Ventajou.WPInfo
             Graphics backgroundGraphics = null;
 
             // take the whole screen size
-            this.Size = Screen.PrimaryScreen.Bounds.Size;
+            this.Size = Resolution;
 
             // size the background pic accordingly
             backgroundPictureBox.Bounds = Bounds;
@@ -55,8 +67,8 @@ namespace Ventajou.WPInfo
             // Renedering the overlays
             if (Program.Settings.Overlays.Count > 0)
             {
-                int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-                int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+                int screenWidth = Resolution.Width;
+                int screenHeight = Resolution.Height;
 
                 // We have to ensure there is a background to render to
                 if (background == null)
@@ -160,7 +172,12 @@ namespace Ventajou.WPInfo
             // The width is hard coded at 500px for now
             _infoTextBox.Size = new Size(500, e.NewRectangle.Size.Height);
 
-            int height = Program.Settings.IgnoreTaskBar ? Screen.PrimaryScreen.Bounds.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
+            int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
+            
+            // Forcing a resolution overrides the IgnoreTaskBar setting ... after all you've forced the resolution,
+            // why second-guess the command line?
+            if (ResolutionForced)
+                height = Resolution.Height;
 
             // adjusting the RichTextBox location based on the user defined screen position
             switch (Program.Settings.ScreenPosition)
@@ -169,13 +186,13 @@ namespace Ventajou.WPInfo
                     _infoTextBox.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
                     break;
                 case ScreenPositions.TopRight:
-                    _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
+                    _infoTextBox.Location = new Point(Resolution.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
                     break;
                 case ScreenPositions.BottomLeft:
                     _infoTextBox.Location = new Point(Program.Settings.HorizontalMargin, height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
                     break;
                 case ScreenPositions.BottomRight:
-                    _infoTextBox.Location = new Point(Screen.PrimaryScreen.Bounds.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
+                    _infoTextBox.Location = new Point(Resolution.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
                     break;
             }
         }
@@ -239,7 +256,10 @@ namespace Ventajou.WPInfo
                     foreach (string value in tokenValues)
                     {
                         // \par closes a paragraph and \pard opens a new one, \li sets the indentation to the specified number of twips
-                        if (sb.Length > 0) sb.Append(@"\par\pard\li" + indent + " ");
+                        // TODO: It's not clear why this is needed. Simplifying as I have done allows right-aligned, multi-line text to
+                        // work properly instead of staggering left strangely
+                        // if (sb.Length > 0) sb.Append(@"\par\pard\li" + indent + " ");
+                        if (sb.Length > 0) sb.Append(@"\par ");
                         sb.Append(value);
                     }
 
@@ -251,11 +271,13 @@ namespace Ventajou.WPInfo
 
                     // Finding the next line break in order to reset the indentation, we have to look right after the newly added values
                     Match nextLineMatch = nextLineRegex.Match(_infoTextBox.Rtf, match.Index + match.Value.Length + (_infoTextBox.Rtf.Length - oldLength));
-                    if (nextLineMatch.Success)
-                    {
-                        // If the line break is found, add a zero indentation right after it
-                        _infoTextBox.Rtf = nextLineRegex.Replace(_infoTextBox.Rtf, nextLineMatch.Groups[1].Value + @"\li0 ", 1, nextLineMatch.Index);
-                    }
+          // TODO: It's not clear why this is necessary. It doesn't appear to improve formatting for either left or right aligned text
+          // and it breaks multi-line right-aligned text!
+          //          if (nextLineMatch.Success)
+          //          {
+          //              // If the line break is found, add a zero indentation right after it
+          //              _infoTextBox.Rtf = nextLineRegex.Replace(_infoTextBox.Rtf, nextLineMatch.Groups[1].Value + @"\li0 ", 1, nextLineMatch.Index);
+          //          }
                 }
                 else if (tokenValues.Length == 1)
                 {
@@ -277,8 +299,8 @@ namespace Ventajou.WPInfo
             // Cut it short if no folder is configured
             if (!Program.Settings.UseBackgroundsFolder || !Directory.Exists(GetRootedPath(Program.Settings.BackgroundsFolder))) return null;
 
-            int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+            int screenWidth = Resolution.Width;
+            int screenHeight = Resolution.Height;
 
             // Getting the list of possible background images
             string[] resourceFiles = Directory.GetFiles(GetRootedPath(Program.Settings.BackgroundsFolder));
@@ -325,12 +347,15 @@ namespace Ventajou.WPInfo
 
             // If no best match is found, we pick the biggest image
             if (string.IsNullOrEmpty(bestImageName)) bestImageName = biggestImage;
-            Bitmap bestImage = new Bitmap(bestImageName);
+            Bitmap bestImage = null;
+            if (!string.IsNullOrEmpty(bestImageName)) bestImage = new Bitmap(bestImageName);
 
             // Resizing the image to match the screen
             //TODO: configurable resize method (tiled, zoomed, etc)
-            Bitmap outputBitmap = new Bitmap(bestImage, screenWidth, screenHeight);
-            return outputBitmap;
+            if (bestImage != null)
+                return new Bitmap(bestImage, screenWidth, screenHeight);
+            else
+                return new Bitmap(screenWidth, screenHeight);
         }
 
         /// <summary>

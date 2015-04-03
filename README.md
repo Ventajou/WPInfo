@@ -7,7 +7,6 @@ WPInfo displays system information on the Windows wallpaper. It works similarly 
 * Plain XML configuration files.
 * You have access to the c# source code!
 
-
-I have successfully used WPInfo on Windows XP SP3 and Windows 7 (32 and 64bits).
+The authors have (independently) successfully used WPInfo on Windows XP SP3, Windows 7 (32 and 64 bit) and Windows 8.1 (64 bit).
 
 Feedback is welcome!
