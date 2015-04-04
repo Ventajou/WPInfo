@@ -8,4 +8,5 @@ namespace Ventajou.WPInfo
         TempFolder,
         OtherFolder
     }
+
 }

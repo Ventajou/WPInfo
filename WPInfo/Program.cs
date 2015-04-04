@@ -154,6 +154,12 @@ namespace Ventajou.WPInfo
             }
             returnValue.Add("Free Space", freeSpace.ToArray());
 
+            //TODO: Arbitrary WMI Query?! Need to prompt at time of add, store query, run query as needed
+            returnValue.Add("WMI Query", new string[] { "WMI Query: Not yet implemented!" });
+
+            //TODO: Arbitrary WScript?! Need to prompt at time of add, store script name, run script as needed
+            returnValue.Add("Windows Script", new string[] { "Windows Script: Not yet implemented!" });
+
             return returnValue;
         }
 

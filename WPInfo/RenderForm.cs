@@ -24,6 +24,7 @@ namespace Ventajou.WPInfo
 
         private System.Drawing.Size Resolution;
         private bool ResolutionForced = false;
+        private ImageModes iMode = Program.Settings.ImageMode;
 
         public RenderForm()
         {
@@ -301,16 +302,17 @@ namespace Ventajou.WPInfo
 
             int screenWidth = Resolution.Width;
             int screenHeight = Resolution.Height;
+            double screenAR = ((double)screenWidth) / ((double)screenHeight);
+            int bestWidth = int.MaxValue, bestARWidth = int.MaxValue;
+            int bestHeight = int.MaxValue, bestARHeight = int.MaxValue;
+            string bestImageName = null, biggestImage = null, bestARImageName = null;
+            int maxWidth = 0;
+            int maxHeight = 0;
+            double bestAR = 0;
+
 
             // Getting the list of possible background images
             string[] resourceFiles = Directory.GetFiles(GetRootedPath(Program.Settings.BackgroundsFolder));
-
-            int bestWidth = int.MaxValue;
-            int bestHeight = int.MaxValue;
-            string bestImageName = null;
-            int maxWidth = 0;
-            int maxHeight = 0;
-            string biggestImage = null;
 
             // looping through the files to find the best match
             foreach (string file in resourceFiles)
@@ -319,25 +321,45 @@ namespace Ventajou.WPInfo
                 try
                 {
                     // Loading the bitmap
-                    using (Bitmap image = new Bitmap(GetRootedPath(file)))
+                    using (Bitmap I = new Bitmap(GetRootedPath(file)))
                     {
-                        // Checking if the bitmap is the closest match
-                        if (image.Width >= screenWidth && image.Height >= screenHeight)
+                        double imageAR = ((double)(I.Width)) / ((double)I.Height);
+
+                        // First check for a perfect match
+                        if ((I.Width == screenWidth) && (I.Height == screenHeight))
                         {
-                            if (image.Width <= bestWidth && image.Height <= bestHeight ||
-                                image.Width * image.Height <= bestWidth * bestHeight)
-                            {
-                                bestWidth = image.Width;
-                                bestHeight = image.Height;
-                                bestImageName = file;
-                            }
+                            // We're done. This one is a perfect match, so save its info and quit the loop
+                            bestWidth = I.Width; bestHeight = I.Height; bestAR = imageAR;
+                            bestImageName = file;
+                            break;
                         }
 
-                        // Also keeping track of the biggest bitmap, in case the screen resolution is bigger than any of the images
-                        if (image.Width >= maxWidth && image.Height >= maxHeight)
+                        // OK it's not perfect. Maybe it's the right Aspect, and the smallest one bigger than the screen?
+                        else if ( (Math.Abs(imageAR - screenAR) < 0.02)
+                            && (I.Width >= screenWidth) && (I.Height >= screenHeight)
+                            && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
                         {
-                            maxWidth = image.Width;
-                            maxHeight = image.Height;
+                            bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
+                            bestARImageName = file;
+                        }
+
+                        // OK it's not even the SAME AR. If we don't already have a best AR that matches the screen, maybe it's close,
+                        // and still the smallest larger than screen?
+                        else if ( (bestAR != screenAR) 
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs (imageAR - bestAR))
+                            && (I.Width >= screenWidth) && (I.Height >= screenHeight)
+                            && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
+                        {
+                            bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
+                            bestARImageName = file;
+                        }
+
+                        // Also keep track of the biggest bitmap, in case the screen resolution is bigger than any of the images AND there's no image
+                        // with the same aspect ratio as the screen. Note that "biggestARImage" if it exists will be bigger than or the same as bestARImage
+                        // depending on whether there are others with the correct AR but a closer resolution match
+                        if (I.Width >= maxWidth && I.Height >= maxHeight)
+                        {
+                            maxWidth = I.Width; maxHeight = I.Height;
                             biggestImage = file;
                         }
                     }
@@ -345,17 +367,62 @@ namespace Ventajou.WPInfo
                 catch (Exception) { }
             }
 
-            // If no best match is found, we pick the biggest image
+            // If no perfect match was found, pick the best AR image
+            if (string.IsNullOrEmpty(bestImageName)) bestImageName = bestARImageName;
+            // If no best match is found yet, we pick the biggest image
             if (string.IsNullOrEmpty(bestImageName)) bestImageName = biggestImage;
             Bitmap bestImage = null;
             if (!string.IsNullOrEmpty(bestImageName)) bestImage = new Bitmap(bestImageName);
 
             // Resizing the image to match the screen
             //TODO: configurable resize method (tiled, zoomed, etc)
+
+            Bitmap B = new Bitmap(screenWidth, screenHeight);
+            Graphics G = Graphics.FromImage(B);
+            float oX = 0, oY = 0;
+            double sFactor = 0;
+            int iWidth = 0, iHeight = 0;
             if (bestImage != null)
-                return new Bitmap(bestImage, screenWidth, screenHeight);
-            else
-                return new Bitmap(screenWidth, screenHeight);
+                switch (iMode)
+                {
+                    case ImageModes.Centered:
+                        oX = (screenWidth - bestImage.Width) /2;      // X offset, may be negative (outside G)
+                        oY = (screenHeight - bestImage.Height) / 2;   // Y offset, may be negative (outside G)
+                        G.DrawImage(bestImage, oX, oY, bestImage.Width, bestImage.Height);
+                        break;
+                    case ImageModes.Fit:
+                        sFactor = Math.Min((double)screenWidth / (double)bestImage.Width, (double)screenHeight / (double)bestImage.Height);
+                        iHeight = (int)Math.Floor(bestImage.Height * sFactor);
+                        iWidth = (int)Math.Floor(bestImage.Width * sFactor);
+                        oX = (screenWidth - iWidth) / 2;      // X offset, may be negative (outside G)
+                        oY = (screenHeight - iHeight) / 2;   // Y offset, may be negative (outside G)
+                        G.DrawImage(bestImage, oX, oY, iWidth, iHeight);
+                        break;
+                    case ImageModes.Fill:
+                        sFactor = Math.Max((double)screenWidth / (double)bestImage.Width, (double)screenHeight / (double)bestImage.Height);
+                        iHeight = (int)Math.Floor(bestImage.Height * sFactor);
+                        iWidth = (int)Math.Floor(bestImage.Width * sFactor);
+                        oX = (screenWidth - iWidth) / 2;      // X offset, may be negative (outside G)
+                        oY = (screenHeight - iHeight) / 2;   // Y offset, may be negative (outside G)
+                        G.DrawImage(bestImage, oX, oY, iWidth, iHeight);
+                        break;
+                    case ImageModes.Stretched:
+                        G.DrawImage(bestImage, 0, 0, B.Width, B.Height);
+                        break;
+                    case ImageModes.Tiled:
+                        while (oX < B.Width)
+                        {
+                            oY = 0;
+                            while (oY < B.Height)
+                            {
+                                G.DrawImage(bestImage, oX, oY, bestImage.Width, bestImage.Height);
+                                oY += bestImage.Height;
+                            }
+                            oX += bestImage.Width;
+                        }
+                        break;
+                }
+            return B;
         }
 
         /// <summary>

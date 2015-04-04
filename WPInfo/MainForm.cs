@@ -434,5 +434,14 @@ namespace Ventajou.WPInfo
             var form = new TextMarginsForm();
             form.ShowDialog();
         }
+
+        private void AdjustSelectionBackground(object sender, EventArgs e)
+        {
+            if (LayoutRichTextBox.SelectionBackColor == RichTextBox.DefaultBackColor)
+                LayoutRichTextBox.SelectionBackColor = Color.DarkGray;
+            else
+                LayoutRichTextBox.SelectionBackColor = RichTextBox.DefaultBackColor;
+        }
+
     }
 }

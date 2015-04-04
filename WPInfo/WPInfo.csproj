@@ -68,6 +68,7 @@
     <Compile Include="BackgroundsFolderForm.Designer.cs">
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\ImageModes.cs" />
     <Compile Include="TextMarginsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +191,17 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="srcImages\Centered.png" />
+    <Content Include="srcImages\Donut Image Source.txt" />
+    <Content Include="srcImages\donut-base-hidef.png" />
+    <Content Include="srcImages\Fill-01.png" />
+    <Content Include="srcImages\Fill-02.png" />
+    <Content Include="srcImages\Fit.png" />
+    <Content Include="srcImages\free-vector-donut-drawing.jpg" />
+    <Content Include="srcImages\Stretched.png" />
+    <Content Include="srcImages\Tiled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

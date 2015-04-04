@@ -33,8 +33,8 @@
             this.backgroundsFolderTextBox = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.backgroundsFolderButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnOK = new System.Windows.Forms.Button();
             this.showBoxCheckBox = new System.Windows.Forms.CheckBox();
             this.opacityTrackBar = new System.Windows.Forms.TrackBar();
             this.OpacityLabel = new System.Windows.Forms.Label();
@@ -76,25 +76,27 @@
             this.backgroundsFolderButton.UseVisualStyleBackColor = true;
             this.backgroundsFolderButton.Click += new System.EventHandler(this.BrowseForBackgroundsFolder);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.Location = new System.Drawing.Point(197, 138);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.CancelDialog);
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(197, 138);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.CancelDialog);
             // 
-            // button3
+            // btnOK
             // 
-            this.button3.Location = new System.Drawing.Point(116, 138);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Ok";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.SaveSettings);
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Location = new System.Drawing.Point(116, 138);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.TabIndex = 5;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.SaveSettings);
             // 
             // showBoxCheckBox
             // 
@@ -127,14 +129,16 @@
             // 
             // BackgroundsFolderForm
             // 
+            this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(283, 175);
             this.Controls.Add(this.OpacityLabel);
             this.Controls.Add(this.opacityTrackBar);
             this.Controls.Add(this.showBoxCheckBox);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.backgroundsFolderButton);
             this.Controls.Add(this.backgroundsFolderTextBox);
             this.Controls.Add(this.useFolderCheckBox);
@@ -157,8 +161,8 @@
         private System.Windows.Forms.TextBox backgroundsFolderTextBox;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.Button backgroundsFolderButton;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox useFolderCheckBox;
         private System.Windows.Forms.CheckBox showBoxCheckBox;
         private System.Windows.Forms.TrackBar opacityTrackBar;

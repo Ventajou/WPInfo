@@ -89,6 +89,11 @@ namespace Ventajou.WPInfo
         /// </summary>
         public bool SaveRelativeImagePaths { get; set; }
 
+        /// <summary>
+        /// Stores the desired background image mode (Centered, Fill, Fit, Stretch, Tiled)
+        /// </summary>
+        public ImageModes ImageMode { get; set; }
+
         public ProgramSettings()
         {
             Overlays = new List<ImageOverlay>();
@@ -112,6 +117,7 @@ namespace Ventajou.WPInfo
             IgnoreTaskBar = false;
             Overlays.Clear();
             SaveRelativeImagePaths = true;
+            ImageMode = ImageModes.Fit;
         }
     }
 }

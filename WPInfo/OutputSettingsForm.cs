@@ -111,6 +111,12 @@ namespace Ventajou.WPInfo
             appDataFolderRadioButton.Checked = Program.Settings.OutputDestination == OutputDestinations.AppDataFolder;
             tempFolderRadioButton.Checked = Program.Settings.OutputDestination == OutputDestinations.TempFolder;
             customFolderRadioButton.Checked = Program.Settings.OutputDestination == OutputDestinations.OtherFolder;
+
+            radioBGCentered.Checked = Program.Settings.ImageMode == ImageModes.Centered;
+            radioBGFit.Checked = Program.Settings.ImageMode == ImageModes.Fit;
+            radioBGFill.Checked = Program.Settings.ImageMode == ImageModes.Fill;
+            radioBGStretched.Checked = Program.Settings.ImageMode == ImageModes.Stretched;
+            radioBGTiled.Checked = Program.Settings.ImageMode == ImageModes.Tiled;
         }
         #endregion
 
@@ -125,5 +131,31 @@ namespace Ventajou.WPInfo
             _outputDestination = destination;
         }
         #endregion
+
+        private void radioBGCentered_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Settings.ImageMode = ImageModes.Centered;
+        }
+
+        private void radioBGStretched_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Settings.ImageMode = ImageModes.Stretched;
+        }
+
+        private void radioBGFit_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Settings.ImageMode = ImageModes.Fit;
+        }
+
+        private void radioBGFill_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Settings.ImageMode = ImageModes.Fill;
+        }
+
+        private void radioBGTiled_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Settings.ImageMode = ImageModes.Tiled;
+        }
+
     }
 }
