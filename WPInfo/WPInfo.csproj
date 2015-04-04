@@ -108,6 +108,12 @@
     <Compile Include="Parameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WMIQueryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WMIQueryForm.Designer.cs">
+      <DependentUpon>WMIQueryForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="BackgroundsFolderForm.resx">
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -139,6 +145,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="WMIQueryForm.resx">
+      <DependentUpon>WMIQueryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
