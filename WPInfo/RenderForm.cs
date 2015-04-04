@@ -356,7 +356,7 @@ namespace Ventajou.WPInfo
                         // OK it's not even the SAME AR. If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the smallest larger than screen?
                         else if ( Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs (imageAR - bestAR)) // We don't care about rounding errors for this comparison though
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs (imageAR - bestAR)) 
                             && (I.Width >= screenWidth) && (I.Height >= screenHeight)
                             && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
                         {
@@ -368,7 +368,7 @@ namespace Ventajou.WPInfo
                         // If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the biggest smaller than screen?
                         else if (Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR)) // We don't care about rounding errors for this comparison though
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR)) 
                             && (I.Width < screenWidth) && (I.Height < screenHeight)
                             && ((I.Width > bestARWidth) || (I.Height > bestARHeight)))
                         {
