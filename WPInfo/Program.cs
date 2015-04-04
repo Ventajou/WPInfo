@@ -154,11 +154,20 @@ namespace Ventajou.WPInfo
             }
             returnValue.Add("Free Space", freeSpace.ToArray());
 
-            //TODO: Arbitrary WMI Query?! Need to prompt at time of add, store query, run query as needed
+            // TODO: Arbitrary WMI Query?! Need to prompt at time of add, store query, run query as needed
+            // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
+            // Props Name, Namespace, Query? Allow select by name and insert into info
             returnValue.Add("WMI Query", new string[] { "WMI Query: Not yet implemented!" });
 
             //TODO: Arbitrary WScript?! Need to prompt at time of add, store script name, run script as needed
+            // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
+            // Props Name, ScriptPath, Params? Allow select by name and insert into info
             returnValue.Add("Windows Script", new string[] { "Windows Script: Not yet implemented!" });
+
+            //TODO: Arbitrary Registry?! Need to prompt at time of add, store hive and path.
+            // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
+            // Props Name, Path? Allow select by name and insert into info
+            returnValue.Add("Registry Data", new string[] { "Registry Data: Not yet implemented!" });
 
             return returnValue;
         }
