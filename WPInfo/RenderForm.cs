@@ -293,6 +293,7 @@ namespace Ventajou.WPInfo
 
         /// <summary>
         /// Gets the background image most appropriate for the current resolution of the primary display.
+        /// Also places the image onto the background layer in the appropriate style (e.g. Centered, Fill, Tiled etc)
         /// </summary>
         /// <returns></returns>
         private Bitmap GetBackground()
@@ -335,7 +336,7 @@ namespace Ventajou.WPInfo
                         }
 
                         // OK it's not perfect. Maybe it's the right Aspect, and the smallest one bigger than the screen?
-                        else if ( (Math.Abs(imageAR - screenAR) < 0.02)
+                        else if ((Math.Abs(imageAR - screenAR) < 0.02)         // Comparing doubles directly is rife with rounding issues
                             && (I.Width >= screenWidth) && (I.Height >= screenHeight)
                             && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
                         {
@@ -343,12 +344,33 @@ namespace Ventajou.WPInfo
                             bestARImageName = file;
                         }
 
+                        // Or maybe it's the right Aspect, and the biggest one SMALLER than the screen?
+                        else if ((Math.Abs(imageAR - screenAR) < 0.02)         // Comparing doubles directly is rife with rounding issues
+                            && (I.Width < screenWidth) && (I.Height < screenHeight)
+                            && ((I.Width > bestARWidth) || (I.Height > bestARHeight)))
+                        {
+                            bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
+                            bestARImageName = file;
+                        }
+
                         // OK it's not even the SAME AR. If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the smallest larger than screen?
-                        else if ( (bestAR != screenAR) 
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs (imageAR - bestAR))
+                        else if ( Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs (imageAR - bestAR)) // We don't care about rounding errors for this comparison though
                             && (I.Width >= screenWidth) && (I.Height >= screenHeight)
                             && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
+                        {
+                            bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
+                            bestARImageName = file;
+                        }
+
+                        // We're striking out. It's not the same AR and it isn't even the size of the screen!
+                        // If we don't already have a best AR that matches the screen, maybe it's close,
+                        // and still the biggest smaller than screen?
+                        else if (Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR)) // We don't care about rounding errors for this comparison though
+                            && (I.Width < screenWidth) && (I.Height < screenHeight)
+                            && ((I.Width > bestARWidth) || (I.Height > bestARHeight)))
                         {
                             bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
                             bestARImageName = file;
