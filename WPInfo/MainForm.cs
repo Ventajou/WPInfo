@@ -441,12 +441,10 @@ namespace Ventajou.WPInfo
             form.ShowDialog();
         }
 
-        private void AdjustSelectionBackground(object sender, EventArgs e)
+        private void wMIQueriesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (LayoutRichTextBox.SelectionBackColor == RichTextBox.DefaultBackColor)
-                LayoutRichTextBox.SelectionBackColor = Color.DarkGray;
-            else
-                LayoutRichTextBox.SelectionBackColor = RichTextBox.DefaultBackColor;
+            WMIQueryForm WMI = new WMIQueryForm();
+            DialogResult result = WMI.ShowDialog();
         }
 
     }
