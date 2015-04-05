@@ -14,6 +14,10 @@ namespace Ventajou.WPInfo
         public WMIQueryForm()
         {
             InitializeComponent();
+            foreach (WMIQuery W in Program.Settings.WMIQueries)
+            {
+                listQueries.Items.Add(W.Name);
+            }
         }
 
         private void btnNew_Click(object sender, EventArgs e)
@@ -23,7 +27,7 @@ namespace Ventajou.WPInfo
             txtQuery.Enabled = true; txtQuery.ReadOnly = false;
             txtName.Focus();
             txtName.Text = "";
-            txtNamespace.Text = "root\\cimV2";
+            txtNamespace.Text = "";
             txtQuery.Text = "";
             btnSave.Enabled = true;
         }
@@ -35,20 +39,50 @@ namespace Ventajou.WPInfo
             txtQuery.Enabled = false; txtQuery.ReadOnly = true;
             if (listQueries.SelectedItem != null)
             {
+                WMIQuery W = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == (string)listQueries.SelectedItem);
                 btnEdit.Enabled = true;
                 btnDelete.Enabled = true;
+                txtName.Text = W.Name;
+                txtNamespace.Text = W.Namespace;
+                txtQuery.Text = W.Query;
             }
             else
             {
                 btnEdit.Enabled = false;
                 btnDelete.Enabled = false;
+                txtName.Text = "";
+                txtNamespace.Text = "";
+                txtQuery.Text = "";
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            listQueries.Items.Add(txtName.Text);
+            WMIQuery oldW = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == (string)listQueries.SelectedItem);
+            WMIQuery W = new WMIQuery();
+            W.Name = txtName.Text;
+            W.Namespace = txtNamespace.Text;
+            W.Query = txtQuery.Text;
+            Program.Settings.WMIQueries.Remove(oldW);
+            Program.Settings.WMIQueries.Add(W);
+            if (oldW.Name != W.Name)
+            {
+                listQueries.Items.RemoveAt(listQueries.SelectedIndex);
+                listQueries.Items.Add(txtName.Text);
+            }
             listQueries.SelectedIndex = listQueries.Items.IndexOf(txtName.Text);
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            WMIQuery W = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == (string)listQueries.SelectedItem);
+            Program.Settings.WMIQueries.Remove(W);
+            listQueries.Items.RemoveAt(listQueries.SelectedIndex);
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

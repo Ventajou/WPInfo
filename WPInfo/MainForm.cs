@@ -447,5 +447,10 @@ namespace Ventajou.WPInfo
             DialogResult result = WMI.ShowDialog();
         }
 
+        private void windowsScriptsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

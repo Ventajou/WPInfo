@@ -51,7 +51,7 @@
             this.listQueries.Name = "listQueries";
             this.listQueries.Size = new System.Drawing.Size(167, 186);
             this.listQueries.Sorted = true;
-            this.listQueries.TabIndex = 0;
+            this.listQueries.TabIndex = 1;
             this.listQueries.SelectedIndexChanged += new System.EventHandler(this.listQueries_SelectedIndexChanged);
             // 
             // label1
@@ -60,8 +60,8 @@
             this.label1.Location = new System.Drawing.Point(12, 11);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Saved Queries";
+            this.label1.TabIndex = 0;
+            this.label1.Text = "&Saved Queries";
             // 
             // btnNew
             // 
@@ -69,7 +69,7 @@
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(83, 32);
             this.btnNew.TabIndex = 2;
-            this.btnNew.Text = "&New";
+            this.btnNew.Text = "Ne&w";
             this.btnNew.UseVisualStyleBackColor = true;
             this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
@@ -79,7 +79,7 @@
             this.btnEdit.Location = new System.Drawing.Point(188, 65);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(83, 32);
-            this.btnEdit.TabIndex = 2;
+            this.btnEdit.TabIndex = 3;
             this.btnEdit.Text = "&Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             // 
@@ -89,7 +89,7 @@
             this.btnSave.Location = new System.Drawing.Point(188, 103);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(83, 32);
-            this.btnSave.TabIndex = 2;
+            this.btnSave.TabIndex = 4;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -100,9 +100,10 @@
             this.btnDelete.Location = new System.Drawing.Point(188, 141);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(83, 32);
-            this.btnDelete.TabIndex = 2;
+            this.btnDelete.TabIndex = 5;
             this.btnDelete.Text = "&Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // label2
             // 
@@ -110,8 +111,8 @@
             this.label2.Location = new System.Drawing.Point(282, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Query Name";
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Query &Name";
             // 
             // txtName
             // 
@@ -120,7 +121,7 @@
             this.txtName.Name = "txtName";
             this.txtName.ReadOnly = true;
             this.txtName.Size = new System.Drawing.Size(237, 20);
-            this.txtName.TabIndex = 3;
+            this.txtName.TabIndex = 7;
             // 
             // label3
             // 
@@ -128,8 +129,8 @@
             this.label3.Location = new System.Drawing.Point(282, 68);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "WMI Namespace";
+            this.label3.TabIndex = 8;
+            this.label3.Text = "W&MI Namespace";
             // 
             // txtNamespace
             // 
@@ -138,7 +139,7 @@
             this.txtNamespace.Name = "txtNamespace";
             this.txtNamespace.ReadOnly = true;
             this.txtNamespace.Size = new System.Drawing.Size(237, 20);
-            this.txtNamespace.TabIndex = 3;
+            this.txtNamespace.TabIndex = 9;
             this.txtNamespace.Text = "root\\cimV2";
             // 
             // label4
@@ -147,8 +148,8 @@
             this.label4.Location = new System.Drawing.Point(282, 125);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Query";
+            this.label4.TabIndex = 10;
+            this.label4.Text = "&Query";
             // 
             // txtQuery
             // 
@@ -158,7 +159,7 @@
             this.txtQuery.Name = "txtQuery";
             this.txtQuery.ReadOnly = true;
             this.txtQuery.Size = new System.Drawing.Size(237, 73);
-            this.txtQuery.TabIndex = 4;
+            this.txtQuery.TabIndex = 11;
             // 
             // btnCancel
             // 
@@ -166,7 +167,7 @@
             this.btnCancel.Location = new System.Drawing.Point(446, 220);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 5;
+            this.btnCancel.TabIndex = 13;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -175,9 +176,10 @@
             this.btnOK.Location = new System.Drawing.Point(365, 220);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 5;
+            this.btnOK.TabIndex = 12;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // WMIQueryForm
             // 

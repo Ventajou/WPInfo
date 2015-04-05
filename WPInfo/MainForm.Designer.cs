@@ -62,6 +62,10 @@
             this.backgroundsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.overlaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trySavingRelativePathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowsScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wMIQueriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.registryKeysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.FontComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.FontSizeComboBox = new System.Windows.Forms.ToolStripComboBox();
@@ -87,10 +91,6 @@
             this.TextColorDialog = new System.Windows.Forms.ColorDialog();
             this.SettingsOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SettingsSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.customItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.wMIQueriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowsScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.registryKeysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -433,6 +433,36 @@
             this.trySavingRelativePathsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.trySavingRelativePathsToolStripMenuItem.Text = "Save Relative Paths";
             // 
+            // customItemsToolStripMenuItem
+            // 
+            this.customItemsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.windowsScriptsToolStripMenuItem,
+            this.wMIQueriesToolStripMenuItem,
+            this.registryKeysToolStripMenuItem});
+            this.customItemsToolStripMenuItem.Name = "customItemsToolStripMenuItem";
+            this.customItemsToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
+            this.customItemsToolStripMenuItem.Text = "Custom Items";
+            // 
+            // windowsScriptsToolStripMenuItem
+            // 
+            this.windowsScriptsToolStripMenuItem.Name = "windowsScriptsToolStripMenuItem";
+            this.windowsScriptsToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.windowsScriptsToolStripMenuItem.Text = "Windows &Scripts";
+            this.windowsScriptsToolStripMenuItem.Click += new System.EventHandler(this.windowsScriptsToolStripMenuItem_Click);
+            // 
+            // wMIQueriesToolStripMenuItem
+            // 
+            this.wMIQueriesToolStripMenuItem.Name = "wMIQueriesToolStripMenuItem";
+            this.wMIQueriesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.wMIQueriesToolStripMenuItem.Text = "W&MI Queries";
+            this.wMIQueriesToolStripMenuItem.Click += new System.EventHandler(this.wMIQueriesToolStripMenuItem_Click);
+            // 
+            // registryKeysToolStripMenuItem
+            // 
+            this.registryKeysToolStripMenuItem.Name = "registryKeysToolStripMenuItem";
+            this.registryKeysToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.registryKeysToolStripMenuItem.Text = "&Registry Keys";
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
@@ -688,35 +718,6 @@
             // 
             this.SettingsSaveFileDialog.DefaultExt = "wpi";
             this.SettingsSaveFileDialog.Filter = "WPInfo Files|*.wpi";
-            // 
-            // customItemsToolStripMenuItem
-            // 
-            this.customItemsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.windowsScriptsToolStripMenuItem,
-            this.wMIQueriesToolStripMenuItem,
-            this.registryKeysToolStripMenuItem});
-            this.customItemsToolStripMenuItem.Name = "customItemsToolStripMenuItem";
-            this.customItemsToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
-            this.customItemsToolStripMenuItem.Text = "Custom Items";
-            // 
-            // wMIQueriesToolStripMenuItem
-            // 
-            this.wMIQueriesToolStripMenuItem.Name = "wMIQueriesToolStripMenuItem";
-            this.wMIQueriesToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.wMIQueriesToolStripMenuItem.Text = "W&MI Queries";
-            this.wMIQueriesToolStripMenuItem.Click += new System.EventHandler(this.wMIQueriesToolStripMenuItem_Click);
-            // 
-            // windowsScriptsToolStripMenuItem
-            // 
-            this.windowsScriptsToolStripMenuItem.Name = "windowsScriptsToolStripMenuItem";
-            this.windowsScriptsToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.windowsScriptsToolStripMenuItem.Text = "Windows &Scripts";
-            // 
-            // registryKeysToolStripMenuItem
-            // 
-            this.registryKeysToolStripMenuItem.Name = "registryKeysToolStripMenuItem";
-            this.registryKeysToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.registryKeysToolStripMenuItem.Text = "&Registry Keys";
             // 
             // MainForm
             // 
