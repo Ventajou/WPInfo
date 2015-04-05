@@ -71,7 +71,7 @@ namespace Ventajou.WPInfo
             W.Name = txtName.Text;
             W.Namespace = txtNamespace.Text;
             W.Query = txtQuery.Text;
-            Program.Settings.WMIQueries.Remove(oldW);
+            if (oldW != null) Program.Settings.WMIQueries.Remove(oldW);
             Program.Settings.WMIQueries.Add(W);
             if ((oldW != null) && (oldW.Name != W.Name))
                 listQueries.Items.RemoveAt(listQueries.SelectedIndex);

@@ -8,7 +8,8 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Management;
+using System.Management;        // Required for WMI support
+using Microsoft.Win32;          // Required for Registry support
 
 namespace Ventajou.WPInfo
 {
@@ -253,33 +254,16 @@ namespace Ventajou.WPInfo
                     switch (match.Groups[1].Value.Substring(0,match.Groups[1].Value.IndexOf("[")))
                     {
                         case TokenIDs.WMIData:
-                            tokenValues = new string[] {};
-                            // Find the query in the list of known queries
-                            WMIQuery W = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == (string)DynamicID);
-                            try
-                            {
-                                using (var WMI = new ManagementObjectSearcher(W.Namespace, W.Query))
-                                {
-                                    List<string> Values = new List<string>();
-                                    foreach (ManagementObject Result in WMI.Get())
-                                        foreach (var pDC in Result.Properties)
-                                            Values.Add(pDC.Value.ToString());
-                                    tokenValues = Values.ToArray();
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                tokenValues = new string[] { "WMI Query " + DynamicID + " failed - " + e.Message };
-                            } 
+                            tokenValues = ExecWMIQuery(DynamicID);
                             break;
                         case TokenIDs.WSHScript:
-                            tokenValues = new string[] {};
+                            tokenValues = ExecScript(DynamicID);
                             break;
                         case TokenIDs.Registry:
-                            tokenValues = new string[] {};
+                            tokenValues = ReadRegistry(DynamicID);
                             break;
-                        default:
-                            tokenValues = new string[] {};
+                        default:    // Unknown type 
+                            tokenValues = new string[] { "Unknown dynamic object type" };
                             break;
                     }
                 }
@@ -509,6 +493,91 @@ namespace Ventajou.WPInfo
 
             return Path.Combine(_appPath, path);
         }
+
+        /// <summary>
+        /// Executes and returns the result of the WMI query nominated by ID. The list of known IDs is
+        /// stored in Program.Settings so it can be saved and restored
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        private string[] ExecWMIQuery (string ID)
+        {
+            // Find the query in the list of known queries
+            WMIQuery W = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == ID);
+            try
+            {
+                using (var WMI = new ManagementObjectSearcher(W.Namespace, W.Query))
+                {
+                    List<string> Values = new List<string>();
+                    foreach (ManagementObject Result in WMI.Get())
+                        foreach (var pDC in Result.Properties)
+                            Values.Add(pDC.Value.ToString());
+                    return Values.ToArray();
+                }
+            }
+            catch (Exception e)
+            {
+                return new string[] { "WMI Query " + ID + " failed - " + e.Message };
+            }
+        }
+
+        /// <summary>
+        /// Executes and returns the output of the WSH Script nominated by ID. The list of known IDs is
+        /// stored in Program.Settings so it can be saved and restored
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        private string[] ExecScript(string ID)
+        {
+            return new string[] { "Not yet implemented" };
+        }
+
+        /// <summary>
+        /// Returns the value or values defined by the Registry Value query nominated by ID. The list of known IDs is
+        /// stored in Program.Settings so it can be saved and restored
+        /// </summary>
+        /// <param name="ID">The named identifier for the Registry value to be queried</param>
+        /// <returns>Array of strings (1+)</returns>
+        private string[] ReadRegistry (string ID)
+        {
+            // Find the query information
+            Ventajou.WPInfo.RegValue R = Program.Settings.RegValues.Find(RegValue => RegValue.Name == ID);
+            try
+            {
+                RegistryKey RK;
+                switch (R.Key)
+                {
+                    case RegValue.HKLM: RK = Registry.LocalMachine; break;
+                    case RegValue.HKCU: RK = Registry.CurrentUser; break;
+                    case RegValue.HKCC: RK = Registry.CurrentConfig; break;
+                    case RegValue.HKCR: RK = Registry.ClassesRoot; break;
+                    case RegValue.HKU: RK = Registry.Users; break;
+                    default: RK = Registry.LocalMachine; break;
+                }
+                RegistryKey SK = RK.OpenSubKey(R.Path, false);
+                if (SK == null) throw new Exception("Could not find Path in Hive");
+                RegistryValueKind RVK = SK.GetValueKind(R.Value);
+                // Format the value based on its type
+                switch (RVK)
+                {
+                    case RegistryValueKind.MultiString:
+                        return new string[] { SK.GetValue(R.Value).ToString() };
+                    case RegistryValueKind.Binary:
+                        byte[] bytes = (byte[])SK.GetValue(R.Value);
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < bytes.Length; i++)
+                            sb.AppendFormat(" {0:X2}", bytes[i]);
+                        return new string[] { sb.ToString() };
+                    default:
+                        return new string[] { String.Format("{0}", SK.GetValue(R.Value)) };
+                }
+            }
+            catch (Exception e)
+            {
+                return new string[] { "Registry value " + R.Name + " error: " + e.Message };
+            }
+        }
+
         #endregion
     }
 }

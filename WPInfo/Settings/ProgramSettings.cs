@@ -107,14 +107,14 @@ namespace Ventajou.WPInfo
         /// <summary>
         /// Stores the list of WMI queries
         /// </summary>
-        public List<Registry> RegKeys { get; set; }
+        public List<RegValue> RegValues { get; set; }
 
         public ProgramSettings()
         {
             Overlays = new List<ImageOverlay>();
             WMIQueries = new List<WMIQuery>();
             WSHScripts = new List<WSHScript>();
-            RegKeys = new List<Registry>();
+            RegValues = new List<RegValue>();
             ResetValues();
         }
 

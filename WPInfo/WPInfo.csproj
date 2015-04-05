@@ -74,7 +74,7 @@
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\ImageModes.cs" />
-    <Compile Include="Settings\Registry.cs" />
+    <Compile Include="Settings\RegValue.cs" />
     <Compile Include="Settings\Tokens.cs" />
     <Compile Include="Settings\WMIQuery.cs" />
     <Compile Include="Settings\WSHScript.cs" />
@@ -117,11 +117,23 @@
     <Compile Include="Parameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RegistryForm.Designer.cs">
+      <DependentUpon>RegistryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WMIQueryForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="WMIQueryForm.Designer.cs">
       <DependentUpon>WMIQueryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WSHScriptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WSHScriptForm.Designer.cs">
+      <DependentUpon>WSHScriptForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="BackgroundsFolderForm.resx">
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
@@ -154,8 +166,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RegistryForm.resx">
+      <DependentUpon>RegistryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WMIQueryForm.resx">
       <DependentUpon>WMIQueryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WSHScriptForm.resx">
+      <DependentUpon>WSHScriptForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

@@ -462,6 +462,7 @@
             this.registryKeysToolStripMenuItem.Name = "registryKeysToolStripMenuItem";
             this.registryKeysToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.registryKeysToolStripMenuItem.Text = "&Registry Keys";
+            this.registryKeysToolStripMenuItem.Click += new System.EventHandler(this.registryKeysToolStripMenuItem_Click);
             // 
             // toolStrip1
             // 

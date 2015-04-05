@@ -77,12 +77,26 @@ namespace Ventajou.WPInfo
                         using (WMIQueryForm WQF = new WMIQueryForm())
                         {
                             if (WQF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                                LayoutRichTextBox.SelectedText = Program.WrapTokenKey("WMI[" + WQF.listQueries.SelectedItem + "]");
+                                LayoutRichTextBox.SelectedText = Program.WrapTokenKey(TokenIDs.WMIData + "[" + WQF.listQueries.SelectedItem + "]");
                             WQF.Close();
                         }
                         break;
-                    case Tokens.WSHScript: break;
-                    case Tokens.RegistryValue: break;
+                    case Tokens.WSHScript:
+                        using (WSHScriptForm WSHF = new WSHScriptForm())
+                        {
+                            if (WSHF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                LayoutRichTextBox.SelectedText = Program.WrapTokenKey(TokenIDs.WSHScript + "[" + WSHF.listQueries.SelectedItem + "]");
+                            WSHF.Close();
+                        }
+                        break;
+                    case Tokens.RegistryValue:
+                        using (RegistryForm RF = new RegistryForm())
+                        {
+                            if (RF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                LayoutRichTextBox.SelectedText = Program.WrapTokenKey(TokenIDs.Registry + "[" + RF.listQueries.SelectedItem + "]");
+                            RF.Close();
+                        }
+                        break;
                     default:
                         LayoutRichTextBox.SelectedText = Program.WrapTokenKey(button.Text);
                         break;
@@ -458,7 +472,14 @@ namespace Ventajou.WPInfo
 
         private void windowsScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            WSHScriptForm WSH = new WSHScriptForm();
+            DialogResult result = WSH.ShowDialog();
+        }
 
+        private void registryKeysToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RegistryForm R = new RegistryForm();
+            DialogResult result = R.ShowDialog();
         }
 
     }
