@@ -98,10 +98,10 @@ namespace Ventajou.WPInfo
             Dictionary<string, string[]> returnValue = new Dictionary<string, string[]>();
 
             // User name
-            returnValue.Add("User Name", new string[] { Environment.UserName });
+            returnValue.Add(Tokens.UserName, new string[] { Environment.UserName });
 
             // Host name
-            returnValue.Add("Host Name", new string[] { Environment.MachineName });
+            returnValue.Add(Tokens.HostName, new string[] { Environment.MachineName });
 
             // IPv4 Addresses
             IPHostEntry hostEntry = Dns.GetHostEntry(Dns.GetHostName());
@@ -110,7 +110,7 @@ namespace Ventajou.WPInfo
             {
                 if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) addresses.Add(address.ToString());
             }
-            returnValue.Add("IPv4 Addresses", addresses.ToArray());
+            returnValue.Add(Tokens.IPv4, addresses.ToArray());
 
             // IPv6 Addresses
             addresses.Clear();
@@ -118,10 +118,10 @@ namespace Ventajou.WPInfo
             {
                 if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) addresses.Add(address.ToString());
             }
-            returnValue.Add("IPv6 Addresses", addresses.ToArray());
+            returnValue.Add(Tokens.IPv6, addresses.ToArray());
 
             // User Logon Domain
-            returnValue.Add("Logon Domain", new string[] { Environment.UserDomainName });
+            returnValue.Add(Tokens.LogonDomain, new string[] { Environment.UserDomainName });
 
             // OS Name
             ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
@@ -129,14 +129,14 @@ namespace Ventajou.WPInfo
 
             foreach (ManagementObject managementObject in objectCollection)
             {
-                returnValue.Add("Operating System", new string[] { managementObject.GetPropertyValue("Caption").ToString() });
+                returnValue.Add(Tokens.OS, new string[] { managementObject.GetPropertyValue("Caption").ToString() });
             }
 
             // OS Service Pack
-            returnValue.Add("OS Service Pack", new string[] { Environment.OSVersion.ServicePack });
+            returnValue.Add(Tokens.OS_SP, new string[] { Environment.OSVersion.ServicePack });
 
             // OS Version
-            returnValue.Add("OS Version", new string[] { Environment.OSVersion.Version.ToString() });
+            returnValue.Add(Tokens.OS_Ver, new string[] { Environment.OSVersion.Version.ToString() });
 
             // Free Space on drives
             DriveInfo[] drives = DriveInfo.GetDrives();
@@ -152,22 +152,22 @@ namespace Ventajou.WPInfo
                 }
                 catch (Exception) { }
             }
-            returnValue.Add("Free Space", freeSpace.ToArray());
+            returnValue.Add(Tokens.FreeSpace, freeSpace.ToArray());
 
             // TODO: Arbitrary WMI Query?! Need to prompt at time of add, store query, run query as needed
             // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI) - done!
-            // Props Name, Namespace, Query? Allow select by name and insert into info
-            returnValue.Add("WMI Query", new string[] { "WMI Query: Not yet implemented!" });
+            // Props Name, Namespace, Query? - done! Allow select by name and insert into info
+            returnValue.Add(Tokens.WMIData, new string[] { "WMI Query: Not yet implemented!" });
 
             //TODO: Arbitrary WScript?! Need to prompt at time of add, store script name, run script as needed
             // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
             // Props Name, ScriptPath, Params? Allow select by name and insert into info
-            returnValue.Add("Windows Script", new string[] { "Windows Script: Not yet implemented!" });
+            returnValue.Add(Tokens.WSHScript, new string[] { "Windows Script: Not yet implemented!" });
 
             //TODO: Arbitrary Registry?! Need to prompt at time of add, store hive and path.
             // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
             // Props Name, Path? Allow select by name and insert into info
-            returnValue.Add("Registry Data", new string[] { "Registry Data: Not yet implemented!" });
+            returnValue.Add(Tokens.RegistryValue, new string[] { "Registry Data: Not yet implemented!" });
 
             return returnValue;
         }

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Management;
 
 namespace Ventajou.WPInfo
 {
@@ -174,7 +175,7 @@ namespace Ventajou.WPInfo
             _infoTextBox.Size = new Size(500, e.NewRectangle.Size.Height);
 
             int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
-            
+
             // Forcing a resolution overrides the IgnoreTaskBar setting ... after all you've forced the resolution,
             // why second-guess the command line?
             if (ResolutionForced)
@@ -241,7 +242,49 @@ namespace Ventajou.WPInfo
             // We loop over tokens in order of appearance in the text, this ensures the indentation can be correctly calculated for multi-line values
             while (match.Success)
             {
-                string[] tokenValues = tokens[match.Groups[1].Value];
+                // This originally assumed the values are pre-populated. For new dynamic data, they cannot be so we need to check those first and 
+                // actually get the values before we allow tokenValues to be formatted
+                string[] tokenValues;
+
+                if ((match.Groups[1].Value.IndexOf("[") > 0) && (match.Groups[1].Value.IndexOf("]") > match.Groups[1].Value.IndexOf("[")))
+                {
+                    // We have a dynamic object - WMI data, WSH Script or Registry Value, identified by the [...] within the match
+                    string DynamicID = match.Groups[1].Value.Substring(match.Groups[1].Value.IndexOf("[")+1, match.Groups[1].Value.IndexOf("]")-match.Groups[1].Value.IndexOf("[")-1);
+                    switch (match.Groups[1].Value.Substring(0,match.Groups[1].Value.IndexOf("[")))
+                    {
+                        case TokenIDs.WMIData:
+                            tokenValues = new string[] {};
+                            // Find the query in the list of known queries
+                            WMIQuery W = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == (string)DynamicID);
+                            try
+                            {
+                                using (var WMI = new ManagementObjectSearcher(W.Namespace, W.Query))
+                                {
+                                    List<string> Values = new List<string>();
+                                    foreach (ManagementObject Result in WMI.Get())
+                                        foreach (var pDC in Result.Properties)
+                                            Values.Add(pDC.Value.ToString());
+                                    tokenValues = Values.ToArray();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                tokenValues = new string[] { "WMI Query " + DynamicID + " failed - " + e.Message };
+                            } 
+                            break;
+                        case TokenIDs.WSHScript:
+                            tokenValues = new string[] {};
+                            break;
+                        case TokenIDs.Registry:
+                            tokenValues = new string[] {};
+                            break;
+                        default:
+                            tokenValues = new string[] {};
+                            break;
+                    }
+                }
+                else
+                    tokenValues = tokens[match.Groups[1].Value];
 
                 // If the token has more than one values, they will each be placed on a new text line
                 if (tokenValues.Length > 1)
@@ -355,8 +398,8 @@ namespace Ventajou.WPInfo
 
                         // OK it's not even the SAME AR. If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the smallest larger than screen?
-                        else if ( Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs (imageAR - bestAR)) 
+                        else if (Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR))
                             && (I.Width >= screenWidth) && (I.Height >= screenHeight)
                             && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
                         {
@@ -368,7 +411,7 @@ namespace Ventajou.WPInfo
                         // If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the biggest smaller than screen?
                         else if (Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR)) 
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR))
                             && (I.Width < screenWidth) && (I.Height < screenHeight)
                             && ((I.Width > bestARWidth) || (I.Height > bestARHeight)))
                         {
@@ -408,7 +451,7 @@ namespace Ventajou.WPInfo
                 switch (iMode)
                 {
                     case ImageModes.Centered:
-                        oX = (screenWidth - bestImage.Width) /2;      // X offset, may be negative (outside G)
+                        oX = (screenWidth - bestImage.Width) / 2;      // X offset, may be negative (outside G)
                         oY = (screenHeight - bestImage.Height) / 2;   // Y offset, may be negative (outside G)
                         G.DrawImage(bestImage, oX, oY, bestImage.Width, bestImage.Height);
                         break;

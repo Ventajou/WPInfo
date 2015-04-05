@@ -40,6 +40,8 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -48,6 +50,9 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Ventajou-Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -70,6 +75,7 @@
     </Compile>
     <Compile Include="Settings\ImageModes.cs" />
     <Compile Include="Settings\Registry.cs" />
+    <Compile Include="Settings\Tokens.cs" />
     <Compile Include="Settings\WMIQuery.cs" />
     <Compile Include="Settings\WSHScript.cs" />
     <Compile Include="TextMarginsForm.cs">
@@ -214,6 +220,7 @@
     <Content Include="srcImages\free-vector-donut-drawing.jpg" />
     <Content Include="srcImages\Stretched.png" />
     <Content Include="srcImages\Tiled.png" />
+    <Content Include="Ventajou-Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

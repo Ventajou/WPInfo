@@ -32,6 +32,14 @@ namespace Ventajou.WPInfo
             btnSave.Enabled = true;
         }
 
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            txtName.Enabled = true; txtName.ReadOnly = false;
+            txtNamespace.Enabled = true; txtNamespace.ReadOnly = false;
+            txtQuery.Enabled = true; txtQuery.ReadOnly = false;
+            btnSave.Enabled = true;
+        }
+
         private void listQueries_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtName.Enabled = false; txtName.ReadOnly = true;
@@ -65,11 +73,10 @@ namespace Ventajou.WPInfo
             W.Query = txtQuery.Text;
             Program.Settings.WMIQueries.Remove(oldW);
             Program.Settings.WMIQueries.Add(W);
-            if (oldW.Name != W.Name)
-            {
+            if ((oldW != null) && (oldW.Name != W.Name))
                 listQueries.Items.RemoveAt(listQueries.SelectedIndex);
+            else if ((oldW == null) || (oldW.Name != W.Name))
                 listQueries.Items.Add(txtName.Text);
-            }
             listQueries.SelectedIndex = listQueries.Items.IndexOf(txtName.Text);
         }
 
@@ -80,9 +87,5 @@ namespace Ventajou.WPInfo
             listQueries.Items.RemoveAt(listQueries.SelectedIndex);
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
     }
 }

@@ -71,13 +71,22 @@ namespace Ventajou.WPInfo
 
             if (button != null)
             {
-                LayoutRichTextBox.SelectedText = Program.WrapTokenKey(button.Text);
-
-                // This is where mods will be needed for more dynamic data (WMI, VBS, Registry)
-                // Possibly use this form:
-                //     <% WMI[Name] %>
-                //     <% Registry[Name] %>
-                //     <% WSH[Name] %>
+                switch (button.Text)
+                {
+                    case Tokens.WMIData:
+                        using (WMIQueryForm WQF = new WMIQueryForm())
+                        {
+                            if (WQF.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                LayoutRichTextBox.SelectedText = Program.WrapTokenKey("WMI[" + WQF.listQueries.SelectedItem + "]");
+                            WQF.Close();
+                        }
+                        break;
+                    case Tokens.WSHScript: break;
+                    case Tokens.RegistryValue: break;
+                    default:
+                        LayoutRichTextBox.SelectedText = Program.WrapTokenKey(button.Text);
+                        break;
+                }
             }
         }
 
