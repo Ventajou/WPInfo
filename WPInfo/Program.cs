@@ -155,7 +155,7 @@ namespace Ventajou.WPInfo
             returnValue.Add("Free Space", freeSpace.ToArray());
 
             // TODO: Arbitrary WMI Query?! Need to prompt at time of add, store query, run query as needed
-            // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
+            // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI) - done!
             // Props Name, Namespace, Query? Allow select by name and insert into info
             returnValue.Add("WMI Query", new string[] { "WMI Query: Not yet implemented!" });
 

@@ -69,6 +69,9 @@
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\ImageModes.cs" />
+    <Compile Include="Settings\Registry.cs" />
+    <Compile Include="Settings\WMIQuery.cs" />
+    <Compile Include="Settings\WSHScript.cs" />
     <Compile Include="TextMarginsForm.cs">
       <SubType>Form</SubType>
     </Compile>

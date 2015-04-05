@@ -94,9 +94,27 @@ namespace Ventajou.WPInfo
         /// </summary>
         public ImageModes ImageMode { get; set; }
 
+        /// <summary>
+        /// Stores the list of WMI queries
+        /// </summary>
+        public List<WMIQuery> WMIQueries { get; set; }
+
+        /// <summary>
+        /// Stores the list of Windows Scripts
+        /// </summary>
+        public List<WSHScript> WSHScripts { get; set; }
+
+        /// <summary>
+        /// Stores the list of WMI queries
+        /// </summary>
+        public List<Registry> RegKeys { get; set; }
+
         public ProgramSettings()
         {
             Overlays = new List<ImageOverlay>();
+            WMIQueries = new List<WMIQuery>();
+            WSHScripts = new List<WSHScript>();
+            RegKeys = new List<Registry>();
             ResetValues();
         }
 
