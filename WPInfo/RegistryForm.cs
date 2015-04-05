@@ -33,9 +33,10 @@ namespace Ventajou.WPInfo
             txtPath.Enabled = true; txtPath.ReadOnly = false;
             txtValue.Enabled = true; txtValue.ReadOnly = false;
             txtName.Focus();
-            txtName.Text = "";
-            txtPath.Text = "";
-            txtValue.Text = "";
+            txtName.Text = RegValue.Defaults.Name;
+            txtPath.Text = RegValue.Defaults.Path;
+            txtValue.Text = RegValue.Defaults.Value;
+            cbHive.SelectedIndex = -1;
             btnSave.Enabled = true;
         }
 
@@ -68,10 +69,10 @@ namespace Ventajou.WPInfo
             {
                 btnEdit.Enabled = false;
                 btnDelete.Enabled = false;
-                txtName.Text = "";
-                cbHive.SelectedIndex = 0;
-                txtPath.Text = "";
-                txtValue.Text = "";
+                txtName.Text = RegValue.Defaults.Name;
+                txtPath.Text = RegValue.Defaults.Path;
+                txtValue.Text = RegValue.Defaults.Value;
+                cbHive.SelectedIndex = -1;
             }
         }
 
@@ -90,6 +91,7 @@ namespace Ventajou.WPInfo
             else if ((oldR == null) || (oldR.Name != R.Name))
                 listQueries.Items.Add(txtName.Text);
             listQueries.SelectedIndex = listQueries.Items.IndexOf(txtName.Text);
+            listQueries_SelectedIndexChanged(sender, e);        // Force refresh to "not editing" state
         }
 
         private void btnDelete_Click(object sender, EventArgs e)

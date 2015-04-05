@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Management;        // Required for WMI support
-using Microsoft.Win32;          // Required for Registry support
+using Microsoft.Win32;
+using System.Diagnostics;
+using System.Threading;          // Required for Registry support
 
 namespace Ventajou.WPInfo
 {
@@ -529,7 +531,27 @@ namespace Ventajou.WPInfo
         /// <returns></returns>
         private string[] ExecScript(string ID)
         {
-            return new string[] { "Not yet implemented" };
+            WSHScript S = Program.Settings.WSHScripts.Find(WSHScript => WSHScript.Name == ID);
+            DateTime dtDeadLine = DateTime.Now.AddSeconds(S.Timeout);
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.RedirectStandardOutput = true;
+            psi.RedirectStandardError = true;
+            psi.FileName = "wscript.exe";
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+            psi.Arguments = S.Name + " " + S.Parameters;
+            Process p = Process.Start(psi);
+            while ((DateTime.Now <= dtDeadLine) && (!p.HasExited)) Thread.Sleep(1000);
+            if (!p.HasExited)
+            {
+                p.Kill();
+                return new string[] { "Runtime exceeded for script " + ID };
+            }
+            using (StreamReader sr = p.StandardOutput)
+            {
+                List<string> l = new List<string>();
+                while (!sr.EndOfStream) l.Add(sr.ReadLine());
+                return l.ToArray();
+            }
         }
 
         /// <summary>

@@ -8,6 +8,14 @@ namespace Ventajou.WPInfo
 {
     public class RegValue : ICloneable
     {
+        public static class Defaults
+        {
+            public const string Name = "RegValue1";
+            public const string Key = "";
+            public const string Path = "";
+            public const string Value = "";
+        }
+
         public const string HKLM = "HKEY_LOCAL_MACHINE";
         public const string HKCU = "HKEY_CURRENT_USER";
         public const string HKCC = "HKEY_CURRENT_CONFIG";

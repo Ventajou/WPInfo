@@ -5,6 +5,13 @@ namespace Ventajou.WPInfo
 {
     public class WMIQuery : ICloneable
     {
+        public static class Defaults
+        {
+            public const string Name = "WMIQuery1";
+            public const string Namespace = "root\\cimV2";
+            public const string Query = "";
+        }
+
         public string Name { get; set; }
         public string Namespace { get; set; }
         public string Query { get; set; }

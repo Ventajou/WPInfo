@@ -26,9 +26,9 @@ namespace Ventajou.WPInfo
             txtNamespace.Enabled = true; txtNamespace.ReadOnly = false;
             txtQuery.Enabled = true; txtQuery.ReadOnly = false;
             txtName.Focus();
-            txtName.Text = "";
-            txtNamespace.Text = "";
-            txtQuery.Text = "";
+            txtName.Text = WMIQuery.Defaults.Name;
+            txtNamespace.Text = WMIQuery.Defaults.Namespace;
+            txtQuery.Text = WMIQuery.Defaults.Query;
             btnSave.Enabled = true;
         }
 
@@ -58,9 +58,9 @@ namespace Ventajou.WPInfo
             {
                 btnEdit.Enabled = false;
                 btnDelete.Enabled = false;
-                txtName.Text = "";
-                txtNamespace.Text = "";
-                txtQuery.Text = "";
+                txtName.Text = WMIQuery.Defaults.Name;
+                txtNamespace.Text = WMIQuery.Defaults.Namespace;
+                txtQuery.Text = WMIQuery.Defaults.Query;
             }
         }
 
@@ -78,6 +78,7 @@ namespace Ventajou.WPInfo
             else if ((oldW == null) || (oldW.Name != W.Name))
                 listQueries.Items.Add(txtName.Text);
             listQueries.SelectedIndex = listQueries.Items.IndexOf(txtName.Text);
+            listQueries_SelectedIndexChanged(sender, e);        // Force refresh to "not editing" state
         }
 
         private void btnDelete_Click(object sender, EventArgs e)

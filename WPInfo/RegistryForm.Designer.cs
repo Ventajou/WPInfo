@@ -185,6 +185,7 @@
             // 
             // cbHive
             // 
+            this.cbHive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbHive.Enabled = false;
             this.cbHive.FormattingEnabled = true;
             this.cbHive.Location = new System.Drawing.Point(285, 67);
