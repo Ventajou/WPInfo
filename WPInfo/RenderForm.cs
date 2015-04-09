@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Management;        // Required for WMI support
+using System.Management;         // Required for WMI support
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Threading;          // Required for Registry support
@@ -21,12 +21,13 @@ namespace Ventajou.WPInfo
     public partial class RenderForm : Form
     {
         // This control is used to render the text
-        TransparentRichTextBox _infoTextBox;
+        TransparentRichTextBox _irtb;
 
         // Path to the executable, used to resolve relative paths
         private string _appPath;
 
-        private System.Drawing.Size Resolution;
+        public System.Drawing.Size Resolution;
+        public Bitmap Output;
         private bool ResolutionForced = false;
         private ImageModes iMode = Program.Settings.ImageMode;
 
@@ -52,118 +53,18 @@ namespace Ventajou.WPInfo
         /// <param name="e"></param>
         private void FormLoaded(object sender, EventArgs e)
         {
-            Graphics backgroundGraphics = null;
+            // All the rendering is done in RenderLayers() now so that target size is not constrained
+            // by screen resolution
+            RenderLayers();
 
-            // take the whole screen size
+            // take the whole screen size - since we render to a bitmap of whatever size is needed,
+            // we need to scale into the form (pretty easy)
             this.Size = Resolution;
 
             // size the background pic accordingly
             backgroundPictureBox.Bounds = Bounds;
-
-            // Get the background image
-            Bitmap background = GetBackground();
-
-            if (background != null)
-            {
-                // Getting a graphics object to draw the overlays on
-                backgroundGraphics = Graphics.FromImage(background);
-            }
-
-            // Renedering the overlays
-            if (Program.Settings.Overlays.Count > 0)
-            {
-                int screenWidth = Resolution.Width;
-                int screenHeight = Resolution.Height;
-
-                // We have to ensure there is a background to render to
-                if (background == null)
-                {
-                    background = new Bitmap(screenWidth, screenHeight);
-                }
-
-                // Loop through the overlay images
-                foreach (ImageOverlay overlay in Program.Settings.Overlays)
-                {
-                    // This is not very pretty but it will keep errors from screwing up the rendering
-                    try
-                    {
-                        using (Bitmap overlayBitmap = new Bitmap(GetRootedPath(overlay.FullPath)))
-                        {
-                            int top = 0;
-                            int left = 0;
-
-                            // Calculating the horizontal position of the overlay
-                            switch (overlay.HorizontalAlignment)
-                            {
-                                case HorizontalAlignment.Center:
-                                    left = (screenWidth - overlayBitmap.Width) / 2;
-                                    break;
-                                case HorizontalAlignment.Left:
-                                    left = overlay.Margin;
-                                    break;
-                                case HorizontalAlignment.Right:
-                                    left = screenWidth - (overlay.Margin + overlayBitmap.Width);
-                                    break;
-                            }
-
-                            // Calculating the vertical position of the overlay
-                            switch (overlay.VerticalAlignment)
-                            {
-                                case VerticalAlignment.Bottom:
-                                    top = screenHeight - (overlay.Margin + overlayBitmap.Height);
-                                    break;
-                                case VerticalAlignment.Center:
-                                    top = (screenHeight - overlayBitmap.Height) / 2;
-                                    break;
-                                case VerticalAlignment.Top:
-                                    top = overlay.Margin;
-                                    break;
-                            }
-
-                            // Drawing the overlay
-                            backgroundGraphics.DrawImage(overlayBitmap, left, top, overlayBitmap.Width, overlayBitmap.Height);
-                        }
-                    }
-                    catch (Exception) { }
-                }
-            }
-
-            // Creating the transparent text box and adding it to the background
-            _infoTextBox = new TransparentRichTextBox();
-            _infoTextBox.AcceptsTab = true;
-            _infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            _infoTextBox.Name = "InfoRichTextBox";
-            _infoTextBox.ReadOnly = true;
-            _infoTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            _infoTextBox.TabStop = false;
-            _infoTextBox.Cursor = System.Windows.Forms.Cursors.Default;
-            _infoTextBox.MouseDown += CloseForm;
-            _infoTextBox.ContentsResized += TextBoxContentsResized;
-            _infoTextBox.DetectUrls = false;
-
-            backgroundPictureBox.Controls.Add(_infoTextBox);
-
-            // fill the text box with the information text
-            SubstituteTokens();
-
-            // Setting the form's background in case no image is specified
-            BackColor = Program.Settings.BackgroundColor.ToColor();
-
-            // applying the background image
-            if (background != null)
-            {
-                if (Program.Settings.ShowTextBox)
-                {
-                    backgroundGraphics.FillRectangle(
-                        new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.ToColor())),
-                         _infoTextBox.Bounds.X - 10,
-                        _infoTextBox.Bounds.Y - 10,
-                        _infoTextBox.Bounds.Width + 20,
-                        _infoTextBox.Bounds.Height + 20);
-                }
-
-                backgroundPictureBox.Image = background;
-            }
+            backgroundPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            backgroundPictureBox.Image = Output;
         }
 
         /// <summary>
@@ -175,7 +76,7 @@ namespace Ventajou.WPInfo
         {
             // Resizing the RichTextBox according to its content
             // The width is hard coded at 500px for now
-            _infoTextBox.Size = new Size(500, e.NewRectangle.Size.Height);
+            _irtb.Size = new Size(500, e.NewRectangle.Size.Height);
 
             int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
 
@@ -188,16 +89,16 @@ namespace Ventajou.WPInfo
             switch (Program.Settings.ScreenPosition)
             {
                 case ScreenPositions.TopLeft:
-                    _infoTextBox.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
+                    _irtb.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
                     break;
                 case ScreenPositions.TopRight:
-                    _infoTextBox.Location = new Point(Resolution.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
+                    _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
                     break;
                 case ScreenPositions.BottomLeft:
-                    _infoTextBox.Location = new Point(Program.Settings.HorizontalMargin, height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
+                    _irtb.Location = new Point(Program.Settings.HorizontalMargin, height - (_irtb.Height + Program.Settings.VerticalMargin));
                     break;
                 case ScreenPositions.BottomRight:
-                    _infoTextBox.Location = new Point(Resolution.Width - (_infoTextBox.Width + Program.Settings.HorizontalMargin), height - (_infoTextBox.Height + Program.Settings.VerticalMargin));
+                    _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), height - (_irtb.Height + Program.Settings.VerticalMargin));
                     break;
             }
         }
@@ -228,7 +129,7 @@ namespace Ventajou.WPInfo
             }
 
             // Putting the text with tokens in the text box for calculation purpose
-            _infoTextBox.Rtf = Program.Settings.InfoText;
+            _irtb.Rtf = Program.Settings.InfoText;
 
             // retrieving the tokens and their values
             Dictionary<string, string[]> tokens = Program.GetTokens();
@@ -240,7 +141,7 @@ namespace Ventajou.WPInfo
             Regex nextLineRegex = new Regex(@"(?<break>\\line|\\par)[^d]");
 
             // Look for the first token
-            Match match = tokenRegex.Match(_infoTextBox.Rtf);
+            Match match = tokenRegex.Match(_irtb.Rtf);
 
             // We loop over tokens in order of appearance in the text, this ensures the indentation can be correctly calculated for multi-line values
             while (match.Success)
@@ -277,7 +178,7 @@ namespace Ventajou.WPInfo
                 {
                     // This calculates the position of the token's first character relative to the text box.
                     // The method uses the plain text for character index, not the RTF text
-                    Point position = _infoTextBox.GetPositionFromCharIndex(tokenRegex.Match(_infoTextBox.Text).Index);
+                    Point position = _irtb.GetPositionFromCharIndex(tokenRegex.Match(_irtb.Text).Index);
                     // Converting the pixel position into twips which is what RTF uses
                     int indent = twipPerPixel * (position.X - 1);
 
@@ -294,13 +195,13 @@ namespace Ventajou.WPInfo
                     }
 
                     // Get the information text length before replacing the token
-                    int oldLength = _infoTextBox.Rtf.Length;
+                    int oldLength = _irtb.Rtf.Length;
 
                     // Replace the token with its values
-                    _infoTextBox.Rtf = tokenRegex.Replace(_infoTextBox.Rtf, sb.ToString(), 1, match.Index);
+                    _irtb.Rtf = tokenRegex.Replace(_irtb.Rtf, sb.ToString(), 1, match.Index);
 
                     // Finding the next line break in order to reset the indentation, we have to look right after the newly added values
-                    Match nextLineMatch = nextLineRegex.Match(_infoTextBox.Rtf, match.Index + match.Value.Length + (_infoTextBox.Rtf.Length - oldLength));
+                    Match nextLineMatch = nextLineRegex.Match(_irtb.Rtf, match.Index + match.Value.Length + (_irtb.Rtf.Length - oldLength));
           // TODO: It's not clear why this is necessary. It doesn't appear to improve formatting for either left or right aligned text
           // and it breaks multi-line right-aligned text!
           //          if (nextLineMatch.Success)
@@ -312,17 +213,19 @@ namespace Ventajou.WPInfo
                 else if (tokenValues.Length == 1)
                 {
                     // When there is a single value, all we do is replace the token with it
-                    _infoTextBox.Rtf = tokenRegex.Replace(_infoTextBox.Rtf, tokenValues[0], 1, match.Index);
+                    _irtb.Rtf = tokenRegex.Replace(_irtb.Rtf, tokenValues[0], 1, match.Index);
                 }
 
                 // Find the next token
-                match = tokenRegex.Match(_infoTextBox.Rtf, match.Index);
+                match = tokenRegex.Match(_irtb.Rtf, match.Index);
             }
         }
 
         /// <summary>
         /// Gets the background image most appropriate for the current resolution of the primary display.
         /// Also places the image onto the background layer in the appropriate style (e.g. Centered, Fill, Tiled etc)
+        /// 
+        /// This is really long and probably could use some breaking up.
         /// </summary>
         /// <returns></returns>
         private Bitmap GetBackground()
@@ -425,11 +328,10 @@ namespace Ventajou.WPInfo
             Bitmap bestImage = null;
             if (!string.IsNullOrEmpty(bestImageName)) bestImage = new Bitmap(bestImageName);
 
-            // Resizing the image to match the screen
-            //TODO: configurable resize method (tiled, zoomed, etc)
-
-            Bitmap B = new Bitmap(screenWidth, screenHeight);
+            // Resizing the image to match the settings and screen, including adding the background colour just in case 
+            Bitmap B = new Bitmap(screenWidth, screenHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             Graphics G = Graphics.FromImage(B);
+            G.FillRectangle(new SolidBrush(Program.Settings.BackgroundColor.ToColor()), 0, 0, screenWidth, screenHeight);
             float oX = 0, oY = 0;
             double sFactor = 0;
             int iWidth = 0, iHeight = 0;
@@ -539,6 +441,7 @@ namespace Ventajou.WPInfo
             psi.FileName = "wscript.exe";
             psi.WindowStyle = ProcessWindowStyle.Hidden;
             psi.Arguments = S.Name + " " + S.Parameters;
+            psi.UseShellExecute = false;
             Process p = Process.Start(psi);
             while ((DateTime.Now <= dtDeadLine) && (!p.HasExited)) Thread.Sleep(1000);
             if (!p.HasExited)
@@ -598,6 +501,90 @@ namespace Ventajou.WPInfo
             {
                 return new string[] { "Registry value " + R.Name + " error: " + e.Message };
             }
+        }
+
+        /// <summary>
+        /// Renders all the layers of the image, from the base colour, through the main image, overlays and
+        /// finally the rich text.
+        /// </summary>
+        public void RenderLayers()
+        {
+            Output = new Bitmap(Resolution.Width, Resolution.Height);
+
+            // Getting a graphics object to draw the overlays on, and fill with default background colour
+            Graphics backgroundGraphics = Graphics.FromImage(Output);
+            backgroundGraphics.FillRectangle(new SolidBrush(Program.Settings.BackgroundColor.ToColor()), 0, 0, Output.Width, Output.Height);
+
+            // Get the background image and draw it
+            Bitmap bgImage = GetBackground();
+            if (bgImage != null) backgroundGraphics.DrawImage(bgImage, 0, 0, bgImage.Width, bgImage.Height);
+
+            // Rendering the overlays
+            if (Program.Settings.Overlays.Count > 0)
+            {
+                // Loop through the overlay images
+                foreach (ImageOverlay overlay in Program.Settings.Overlays)
+                {
+                    // This is not very pretty but it will keep errors from screwing up the rendering
+                    try
+                    {
+                        using (Bitmap overlayBitmap = new Bitmap(GetRootedPath(overlay.FullPath)))
+                        {
+                            int top = 0;
+                            int left = 0;
+
+                            // Calculating the horizontal position of the overlay
+                            switch (overlay.HorizontalAlignment)
+                            {
+                                case HorizontalAlignment.Center:
+                                    left = (Resolution.Width - overlayBitmap.Width) / 2;
+                                    break;
+                                case HorizontalAlignment.Left:
+                                    left = overlay.Margin;
+                                    break;
+                                case HorizontalAlignment.Right:
+                                    left = Resolution.Width - (overlay.Margin + overlayBitmap.Width);
+                                    break;
+                            }
+
+                            // Calculating the vertical position of the overlay
+                            switch (overlay.VerticalAlignment)
+                            {
+                                case VerticalAlignment.Bottom:
+                                    top = Resolution.Height - (overlay.Margin + overlayBitmap.Height);
+                                    break;
+                                case VerticalAlignment.Center:
+                                    top = (Resolution.Height - overlayBitmap.Height) / 2;
+                                    break;
+                                case VerticalAlignment.Top:
+                                    top = overlay.Margin;
+                                    break;
+                            }
+
+                            // Drawing the overlay
+                            backgroundGraphics.DrawImage(overlayBitmap, left, top, overlayBitmap.Width, overlayBitmap.Height);
+                        }
+                    }
+                    catch (Exception) { }
+                }
+            }
+
+            // Creating the transparent text box and adding it on top
+            _irtb = new TransparentRichTextBox();
+            _irtb.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            _irtb.Name = "InfoRichTextBox";
+            _irtb.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            _irtb.ContentsResized += TextBoxContentsResized;
+            _irtb.DetectUrls = false;
+            if (Program.Settings.ShowTextBox)
+                _irtb.BackColor = Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B);
+
+            // fill the text box with the information text
+            SubstituteTokens();
+
+            // Draw it on the background and we're done
+            // Note this is where the current bugs lie - e.g. horrible AA, last line cut off.
+            backgroundGraphics.DrawRtfText(_irtb.Rtf, new Rectangle(_irtb.Location, _irtb.Size));
         }
 
         #endregion

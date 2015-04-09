@@ -95,6 +95,7 @@
     <Compile Include="BackgroundsFolderForm.Designer.cs">
       <DependentUpon>BackgroundsFolderForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Graphics_DrawRtfText.cs" />
     <Compile Include="Settings\ImageModes.cs" />
     <Compile Include="Settings\RegValue.cs" />
     <Compile Include="Settings\Tokens.cs" />

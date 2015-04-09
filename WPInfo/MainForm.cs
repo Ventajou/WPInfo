@@ -17,6 +17,8 @@ namespace Ventajou.WPInfo
         // Reference to the form used to render the wallbpaper
         private RenderForm _renderForm;
 
+        public Size Resolution { get; set; }
+
         // Name of the configuration file.
         private string _fileName;
 
@@ -29,6 +31,12 @@ namespace Ventajou.WPInfo
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        public MainForm(Size Res)
+        {
+            InitializeComponent();
+            Resolution = Res;
         }
 
         #region Event Handlers
@@ -203,7 +211,11 @@ namespace Ventajou.WPInfo
         private void ShowPreview(object sender, EventArgs e)
         {
             Program.Settings.InfoText = LayoutRichTextBox.Rtf;
-            _renderForm = new RenderForm();
+
+            if (Resolution.IsEmpty) 
+                _renderForm = new RenderForm();
+            else
+                _renderForm = new RenderForm(Resolution);
             _renderForm.Show();
             _renderForm.Location = new Point(0, 0);
         }

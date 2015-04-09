@@ -38,6 +38,8 @@ namespace Ventajou.WPInfo
         {
             Settings = new ProgramSettings();
 
+            //System.Threading.Thread.Sleep(30000);
+
             Parameters parameters = new Parameters();
             try
             {
@@ -157,17 +159,17 @@ namespace Ventajou.WPInfo
             // TODO: Arbitrary WMI Query?! Need to prompt at time of add, store query, run query as needed
             // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI) - done!
             // Props Name, Namespace, Query? - done! Allow select by name and insert into info
-            returnValue.Add(Tokens.WMIData, new string[] { "WMI Query: Not yet implemented!" });
+            returnValue.Add(Tokens.WMIData, new string[] { "WMI Query: Placeholder" });
 
             //TODO: Arbitrary WScript?! Need to prompt at time of add, store script name, run script as needed
             // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
             // Props Name, ScriptPath, Params? Allow select by name and insert into info
-            returnValue.Add(Tokens.WSHScript, new string[] { "Windows Script: Not yet implemented!" });
+            returnValue.Add(Tokens.WSHScript, new string[] { "Windows Script: Placeholder" });
 
             //TODO: Arbitrary Registry?! Need to prompt at time of add, store hive and path.
             // Design thoughts: Collection of objects in Program Settings (which means they're saved in the .WPI)
             // Props Name, Path? Allow select by name and insert into info
-            returnValue.Add(Tokens.RegistryValue, new string[] { "Registry Data: Not yet implemented!" });
+            returnValue.Add(Tokens.RegistryValue, new string[] { "Registry Data: Placeholder" });
 
             return returnValue;
         }
@@ -177,17 +179,17 @@ namespace Ventajou.WPInfo
             return "<% " + key + " %>";
         }
 
-        public static Bitmap CaptureWindow(Form form)
-        {
-            Bitmap bitmap = new Bitmap(form.Width, form.Height);
-            Graphics graphics = Graphics.FromImage(bitmap);
+        //public static Bitmap CaptureWindow(Form form)
+        //{
+        //    Bitmap bitmap = new Bitmap(form.Width, form.Height);
+        //    Graphics graphics = Graphics.FromImage(bitmap);
 
-            bool result = PrintWindow(form.Handle, graphics.GetHdc(), 0);
-            graphics.ReleaseHdc();
-            graphics.Flush();
+        //    bool result = PrintWindow(form.Handle, graphics.GetHdc(), 0);
+        //    graphics.ReleaseHdc();
+        //    graphics.Flush();
 
-            return bitmap;
-        }
+        //    return bitmap;
+        //}
 
         public static void SetWallpaper(RenderForm renderForm)
         {
@@ -212,22 +214,20 @@ namespace Ventajou.WPInfo
             destinationPath = Environment.ExpandEnvironmentVariables(Path.Combine(destinationPath, Settings.OutputFileName));
 
             if (renderForm == null)
-            {
-                if (ForcedResolution != null)
-                {
+                if (ForcedResolution != Size.Empty)
                     renderForm = new RenderForm(ForcedResolution);
-                    renderForm.Show();
-                    renderForm.Location = new Point(0, 0);
-                }
                 else
-                {
                     renderForm = new RenderForm();
-                    renderForm.Show();
-                    renderForm.Location = new Point(0, 0);
-                }
-            }
 
-            Bitmap b = CaptureWindow(renderForm);
+            renderForm.RenderLayers();
+
+            // Use the size from the form, which means we don't need to calculate screen sizes etc all over again
+            // We might not need this, we should be able to use Output natively since it should be the right size!
+            //Size finalRes = renderForm.Resolution;
+
+            //Bitmap b = new Bitmap(renderForm.Output, finalRes.Width, finalRes.Height);
+            Bitmap b = renderForm.Output;
+            // TODO: Selectable image format (at least BMP/JPG/PNG)
             b.Save(destinationPath, ImageFormat.Bmp);
 
             renderForm.Close();
