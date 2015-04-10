@@ -10,3 +10,5 @@ WPInfo displays system information on the Windows wallpaper. It works similarly 
 The authors have (independently) successfully used WPInfo on Windows XP SP3, Windows 7 (32 and 64 bit) and Windows 8.1 (64 bit).
 
 Feedback is welcome!
+
+[![Join the chat at https://gitter.im/Ventajou/WPInfo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ventajou/WPInfo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
