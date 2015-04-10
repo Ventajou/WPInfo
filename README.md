@@ -1,3 +1,9 @@
+WPInfo
+-
+
+[![Build status](https://ci.appveyor.com/api/projects/status/mqq9n9lcsq19kpru/branch/master?svg=true)](https://ci.appveyor.com/project/Ventajou/wpinfo/branch/master)
+[![Join the chat at https://gitter.im/Ventajou/WPInfo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ventajou/WPInfo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 WPInfo displays system information on the Windows wallpaper. It works similarly to BGInfo from SysInternals but it adds a few unique features:
 
 * Picks the background image most appropriate for the current screen resolution from a configured folder.
@@ -10,5 +16,3 @@ WPInfo displays system information on the Windows wallpaper. It works similarly 
 The authors have (independently) successfully used WPInfo on Windows XP SP3, Windows 7 (32 and 64 bit) and Windows 8.1 (64 bit).
 
 Feedback is welcome!
-
-[![Join the chat at https://gitter.im/Ventajou/WPInfo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ventajou/WPInfo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
