@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -40,8 +41,6 @@ namespace Ventajou.WPInfo
             // Convert the unit used by the .NET framework (1/100 inch) 
             // and the unit used by Win32 API calls (twips 1/1440 inch)
 
-            private const double anInch = 14.4;
-
             protected override CreateParams CreateParams
             {
                 get
@@ -58,12 +57,15 @@ namespace Ventajou.WPInfo
 
             public void Draw(Graphics graphics, Rectangle layoutArea)
             {
+                double anInchX = 1440 / graphics.DpiX;
+                double anInchY = 1440 / graphics.DpiY;
+
                 //Calculate the area to render.
                 SafeNativeMethods.RECT rectLayoutArea;
-                rectLayoutArea.Top = (int)(layoutArea.Top * anInch);
-                rectLayoutArea.Bottom = (int)(layoutArea.Bottom * anInch);
-                rectLayoutArea.Left = (int)(layoutArea.Left * anInch);
-                rectLayoutArea.Right = (int)(layoutArea.Right * anInch);
+                rectLayoutArea.Top = (int)(layoutArea.Top * anInchY);
+                rectLayoutArea.Bottom = (int)(layoutArea.Bottom * anInchY);
+                rectLayoutArea.Left = (int)(layoutArea.Left * anInchX);
+                rectLayoutArea.Right = (int)(layoutArea.Right * anInchX);
 
                 IntPtr hdc = graphics.GetHdc();
 

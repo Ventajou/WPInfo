@@ -38,7 +38,9 @@
             this.showBoxCheckBox = new System.Windows.Forms.CheckBox();
             this.opacityTrackBar = new System.Windows.Forms.TrackBar();
             this.OpacityLabel = new System.Windows.Forms.Label();
+            this.pbTextBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextBox)).BeginInit();
             this.SuspendLayout();
             // 
             // useFolderCheckBox
@@ -117,6 +119,7 @@
             this.opacityTrackBar.TabIndex = 7;
             this.opacityTrackBar.TickFrequency = 20;
             this.opacityTrackBar.Value = 255;
+            this.opacityTrackBar.Scroll += new System.EventHandler(this.opacityTrackBar_Scroll);
             // 
             // OpacityLabel
             // 
@@ -127,6 +130,16 @@
             this.OpacityLabel.TabIndex = 8;
             this.OpacityLabel.Text = "Opacity";
             // 
+            // pbTextBox
+            // 
+            this.pbTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbTextBox.Location = new System.Drawing.Point(32, 103);
+            this.pbTextBox.Name = "pbTextBox";
+            this.pbTextBox.Padding = new System.Windows.Forms.Padding(1);
+            this.pbTextBox.Size = new System.Drawing.Size(60, 29);
+            this.pbTextBox.TabIndex = 9;
+            this.pbTextBox.TabStop = false;
+            // 
             // BackgroundsFolderForm
             // 
             this.AcceptButton = this.btnOK;
@@ -134,6 +147,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(283, 175);
+            this.Controls.Add(this.pbTextBox);
             this.Controls.Add(this.OpacityLabel);
             this.Controls.Add(this.opacityTrackBar);
             this.Controls.Add(this.showBoxCheckBox);
@@ -151,6 +165,7 @@
             this.Text = "Backgrounds Folder";
             this.Shown += new System.EventHandler(this.ShowForm);
             ((System.ComponentModel.ISupportInitialize)(this.opacityTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTextBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,5 +182,6 @@
         private System.Windows.Forms.CheckBox showBoxCheckBox;
         private System.Windows.Forms.TrackBar opacityTrackBar;
         private System.Windows.Forms.Label OpacityLabel;
+        private System.Windows.Forms.PictureBox pbTextBox;
     }
 }

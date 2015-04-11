@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Ventajou.WPInfo
@@ -76,6 +77,12 @@ namespace Ventajou.WPInfo
             backgroundsFolderTextBox.Text = Program.Settings.BackgroundsFolder;
             showBoxCheckBox.Checked = Program.Settings.ShowTextBox;
             opacityTrackBar.Value = Program.Settings.TextBoxOpacity;
+            pbTextBox.BackColor = Color.FromArgb(opacityTrackBar.Value, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B);
+        }
+
+        private void opacityTrackBar_Scroll(object sender, EventArgs e)
+        {
+            pbTextBox.BackColor = Color.FromArgb(opacityTrackBar.Value, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B);
         }
     }
 }

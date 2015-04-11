@@ -21,7 +21,7 @@ namespace Ventajou.WPInfo
     public partial class RenderForm : Form
     {
         // This control is used to render the text
-        TransparentRichTextBox _irtb;
+        /*Transparent*/RichTextBox _irtb;
 
         // Path to the executable, used to resolve relative paths
         private string _appPath;
@@ -76,7 +76,13 @@ namespace Ventajou.WPInfo
         {
             // Resizing the RichTextBox according to its content
             // The width is hard coded at 500px for now
-            _irtb.Size = new Size(500, e.NewRectangle.Size.Height);
+            //_irtb.Size = new Size(500, e.NewRectangle.Size.Height);
+
+            // Revised based on http://stackoverflow.com/questions/11906932/size-richtextbox-according-to-contents
+            // Problem is it's never called AFTER the tokens are replaced - apparently that doesn't trigger the event
+            RichTextBox rTB = (RichTextBox)sender;
+            rTB.Width = e.NewRectangle.Width;
+            rTB.Height = e.NewRectangle.Height;
 
             int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
 
@@ -570,20 +576,25 @@ namespace Ventajou.WPInfo
             }
 
             // Creating the transparent text box and adding it on top
-            _irtb = new TransparentRichTextBox();
+            _irtb = new RichTextBox();
+            _irtb.Size = new Size(500, 50);
             _irtb.BorderStyle = System.Windows.Forms.BorderStyle.None;
             _irtb.Name = "InfoRichTextBox";
             _irtb.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
             _irtb.ContentsResized += TextBoxContentsResized;
             _irtb.DetectUrls = false;
-            if (Program.Settings.ShowTextBox)
-                _irtb.BackColor = Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B);
+            _irtb.Margin = new Padding(0,0,0,0);
 
             // fill the text box with the information text
             SubstituteTokens();
 
             // Draw it on the background and we're done
-            // Note this is where the current bugs lie - e.g. horrible AA, last line cut off.
+            // Note this is where the current bugs lie - e.g. horrible AA, box wrong size.
+            if (Program.Settings.ShowTextBox)
+            {
+                Brush b = new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B));
+                backgroundGraphics.FillRectangle(b, new Rectangle(_irtb.Location, _irtb.Size));
+            }
             backgroundGraphics.DrawRtfText(_irtb.Rtf, new Rectangle(_irtb.Location, _irtb.Size));
         }
 
