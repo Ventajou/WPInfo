@@ -21,28 +21,25 @@ namespace Ventajou.WPInfo
     public partial class RenderForm : Form
     {
         // This control is used to render the text
-        /*Transparent*/RichTextBox _irtb;
+        ///*Transparent*/RichTextBox _irtb;
 
         // Path to the executable, used to resolve relative paths
         private string _appPath;
 
         public System.Drawing.Size Resolution;
         public Bitmap Output;
-        private bool ResolutionForced = false;
         private ImageModes iMode = Program.Settings.ImageMode;
 
         public RenderForm()
         {
             InitializeComponent();
             Resolution = Screen.PrimaryScreen.Bounds.Size;
-            ResolutionForced = false;
         }
 
         public RenderForm(System.Drawing.Size ForceRes)
         {
             InitializeComponent();
             Resolution = ForceRes;
-            ResolutionForced = true;
         }
 
         #region Event Handlers
@@ -72,42 +69,42 @@ namespace Ventajou.WPInfo
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TextBoxContentsResized(object sender, ContentsResizedEventArgs e)
-        {
-            // Resizing the RichTextBox according to its content
-            // The width is hard coded at 500px for now
-            //_irtb.Size = new Size(500, e.NewRectangle.Size.Height);
+        //private void TextBoxContentsResized(object sender, ContentsResizedEventArgs e)
+        //{
+        //    // Resizing the RichTextBox according to its content
+        //    // The width is hard coded at 500px for now
+        //    //_irtb.Size = new Size(500, e.NewRectangle.Size.Height);
 
-            // Revised based on http://stackoverflow.com/questions/11906932/size-richtextbox-according-to-contents
-            // Problem is it's never called AFTER the tokens are replaced - apparently that doesn't trigger the event
-            RichTextBox rTB = (RichTextBox)sender;
-            rTB.Width = e.NewRectangle.Width;
-            rTB.Height = e.NewRectangle.Height;
+        //    // Revised based on http://stackoverflow.com/questions/11906932/size-richtextbox-according-to-contents
+        //    // Problem is it's never called AFTER the tokens are replaced - apparently that doesn't trigger the event
+        //    RichTextBox rTB = (RichTextBox)sender;
+        //    rTB.Width = e.NewRectangle.Width;
+        //    rTB.Height = e.NewRectangle.Height;
 
-            int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
+        //    int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
 
-            // Forcing a resolution overrides the IgnoreTaskBar setting ... after all you've forced the resolution,
-            // why second-guess the command line?
-            if (ResolutionForced)
-                height = Resolution.Height;
+        //    // Forcing a resolution overrides the IgnoreTaskBar setting ... after all you've forced the resolution,
+        //    // why second-guess the command line?
+        //    if (ResolutionForced)
+        //        height = Resolution.Height;
 
-            // adjusting the RichTextBox location based on the user defined screen position
-            switch (Program.Settings.ScreenPosition)
-            {
-                case ScreenPositions.TopLeft:
-                    _irtb.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
-                    break;
-                case ScreenPositions.TopRight:
-                    _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
-                    break;
-                case ScreenPositions.BottomLeft:
-                    _irtb.Location = new Point(Program.Settings.HorizontalMargin, height - (_irtb.Height + Program.Settings.VerticalMargin));
-                    break;
-                case ScreenPositions.BottomRight:
-                    _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), height - (_irtb.Height + Program.Settings.VerticalMargin));
-                    break;
-            }
-        }
+        //    // adjusting the RichTextBox location based on the user defined screen position
+        //    switch (Program.Settings.ScreenPosition)
+        //    {
+        //        case ScreenPositions.TopLeft:
+        //            _irtb.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
+        //            break;
+        //        case ScreenPositions.TopRight:
+        //            _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
+        //            break;
+        //        case ScreenPositions.BottomLeft:
+        //            _irtb.Location = new Point(Program.Settings.HorizontalMargin, height - (_irtb.Height + Program.Settings.VerticalMargin));
+        //            break;
+        //        case ScreenPositions.BottomRight:
+        //            _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), height - (_irtb.Height + Program.Settings.VerticalMargin));
+        //            break;
+        //    }
+        //}
 
         /// <summary>
         /// Called when the mouse button is pressed
@@ -125,29 +122,30 @@ namespace Ventajou.WPInfo
         /// <summary>
         /// Substitutes the tokens with the correct data and renders the text.
         /// </summary>
-        public void SubstituteTokens()
+        public string SubstituteTokens()
         {
             // RTF uses twips as measuring units. We calculate those using the main screen's DPI
-            int twipPerPixel;
-            using (Graphics g = CreateGraphics())
-            {
-                twipPerPixel = (int)(1440 / g.DpiX);
-            }
+            //int twipPerPixel;
+            
+            // Temporary variable for token replacement
+            string sInfo = Program.Settings.InfoHtml;
 
-            // Putting the text with tokens in the text box for calculation purpose
-            _irtb.Rtf = Program.Settings.InfoText;
+            //using (Graphics g = CreateGraphics())
+            //{
+            //    twipPerPixel = (int)(1440 / g.DpiX);
+            //}
 
             // retrieving the tokens and their values
             Dictionary<string, string[]> tokens = Program.GetTokens();
 
             // This regular expression will find tokens in the information text
-            Regex tokenRegex = new Regex("<% (?<token>.*?) %>");
+            Regex tokenRegex = new Regex(Tokens.TokenRegex);
 
             // This will find the next line break after a multi value token.
-            Regex nextLineRegex = new Regex(@"(?<break>\\line|\\par)[^d]");
+            // Regex nextLineRegex = new Regex(@"(?<break>\\line|\\par)[^d]");     // Something new for HTML mode will be needed
 
             // Look for the first token
-            Match match = tokenRegex.Match(_irtb.Rtf);
+            Match match = tokenRegex.Match(sInfo);
 
             // We loop over tokens in order of appearance in the text, this ensures the indentation can be correctly calculated for multi-line values
             while (match.Success)
@@ -184,47 +182,38 @@ namespace Ventajou.WPInfo
                 {
                     // This calculates the position of the token's first character relative to the text box.
                     // The method uses the plain text for character index, not the RTF text
-                    Point position = _irtb.GetPositionFromCharIndex(tokenRegex.Match(_irtb.Text).Index);
-                    // Converting the pixel position into twips which is what RTF uses
-                    int indent = twipPerPixel * (position.X - 1);
+                    //Point position = sInfo.IndexOf(tokenRegex.Match(sInfo).Index);
+                    //// Converting the pixel position into twips which is what RTF uses
+                    //int indent = twipPerPixel * (position.X - 1);
 
                     // Next we loop over the token values and build a string
                     StringBuilder sb = new StringBuilder();
                     foreach (string value in tokenValues)
                     {
-                        // \par closes a paragraph and \pard opens a new one, \li sets the indentation to the specified number of twips
-                        // TODO: It's not clear why this is needed. Simplifying as I have done allows right-aligned, multi-line text to
-                        // work properly instead of staggering left strangely
-                        // if (sb.Length > 0) sb.Append(@"\par\pard\li" + indent + " ");
-                        if (sb.Length > 0) sb.Append(@"\par ");
+                        // Add an HTML line break, which should preserve all other formatting
+                        if (sb.Length > 0) sb.Append("<br />");
                         sb.Append(value);
                     }
 
                     // Get the information text length before replacing the token
-                    int oldLength = _irtb.Rtf.Length;
+                    int oldLength = sInfo.Length;
 
                     // Replace the token with its values
-                    _irtb.Rtf = tokenRegex.Replace(_irtb.Rtf, sb.ToString(), 1, match.Index);
+                    sInfo = tokenRegex.Replace(sInfo, sb.ToString(), 1, match.Index);
 
                     // Finding the next line break in order to reset the indentation, we have to look right after the newly added values
-                    Match nextLineMatch = nextLineRegex.Match(_irtb.Rtf, match.Index + match.Value.Length + (_irtb.Rtf.Length - oldLength));
-          // TODO: It's not clear why this is necessary. It doesn't appear to improve formatting for either left or right aligned text
-          // and it breaks multi-line right-aligned text!
-          //          if (nextLineMatch.Success)
-          //          {
-          //              // If the line break is found, add a zero indentation right after it
-          //              _infoTextBox.Rtf = nextLineRegex.Replace(_infoTextBox.Rtf, nextLineMatch.Groups[1].Value + @"\li0 ", 1, nextLineMatch.Index);
-          //          }
+                    // Match nextLineMatch = nextLineRegex.Match(sInfo, match.Index + match.Value.Length + (sInfo.Length - oldLength));
                 }
                 else if (tokenValues.Length == 1)
                 {
                     // When there is a single value, all we do is replace the token with it
-                    _irtb.Rtf = tokenRegex.Replace(_irtb.Rtf, tokenValues[0], 1, match.Index);
+                  sInfo = tokenRegex.Replace(sInfo, tokenValues[0], 1, match.Index);
                 }
 
                 // Find the next token
-                match = tokenRegex.Match(_irtb.Rtf, match.Index);
+                match = tokenRegex.Match(sInfo, match.Index);
             }
+            return sInfo;
         }
 
         /// <summary>
@@ -575,27 +564,30 @@ namespace Ventajou.WPInfo
                 }
             }
 
-            // Creating the transparent text box and adding it on top
-            _irtb = new RichTextBox();
-            _irtb.Size = new Size(500, 50);
-            _irtb.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            _irtb.Name = "InfoRichTextBox";
-            _irtb.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            _irtb.ContentsResized += TextBoxContentsResized;
-            _irtb.DetectUrls = false;
-            _irtb.Margin = new Padding(0,0,0,0);
+            //// Creating the transparent text box and adding it on top
+            //_irtb = new RichTextBox();
+            //_irtb.Size = new Size(500, 50);
+            //_irtb.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            //_irtb.Name = "InfoRichTextBox";
+            //_irtb.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            //_irtb.ContentsResized += TextBoxContentsResized;
+            //_irtb.DetectUrls = false;
+            //_irtb.Margin = new Padding(0,0,0,0);
 
             // fill the text box with the information text
-            SubstituteTokens();
+            string infoHtml = SubstituteTokens();
 
             // Draw it on the background and we're done
             // Note this is where the current bugs lie - e.g. horrible AA, box wrong size.
-            if (Program.Settings.ShowTextBox)
-            {
-                Brush b = new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B));
-                backgroundGraphics.FillRectangle(b, new Rectangle(_irtb.Location, _irtb.Size));
-            }
-            backgroundGraphics.DrawRtfText(_irtb.Rtf, new Rectangle(_irtb.Location, _irtb.Size));
+            //if (Program.Settings.ShowTextBox)
+            //{
+            //    Brush b = new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B));
+            //    backgroundGraphics.FillRectangle(b, new Rectangle(_irtb.Location, _irtb.Size));
+            //}
+            //backgroundGraphics.DrawRtfText(_irtb.Rtf, new Rectangle(_irtb.Location, _irtb.Size));
+
+            
+
         }
 
         #endregion

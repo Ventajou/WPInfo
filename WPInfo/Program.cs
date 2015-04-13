@@ -176,7 +176,8 @@ namespace Ventajou.WPInfo
 
         public static string WrapTokenKey(string key)
         {
-            return "<% " + key + " %>";
+          // Ah crap, with HTML we can't use this any more!
+          return Tokens.TokenLeft + key + Tokens.TokenRight;
         }
 
         //public static Bitmap CaptureWindow(Form form)

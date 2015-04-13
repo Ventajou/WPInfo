@@ -7,6 +7,10 @@ namespace Ventajou.WPInfo
 {
     class Tokens
     {
+        public const string TokenLeft = "{% ";
+        public const string TokenRight = " %}";
+        public const string TokenRegex = "{% (?<token>.*?) %}";
+
         public const string UserName = "User Name";
         public const string HostName = "Host Name";
         public const string IPv4 = "IPv4 Addresses";

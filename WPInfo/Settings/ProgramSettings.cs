@@ -25,6 +25,11 @@ namespace Ventajou.WPInfo
         public string InfoText { get; set; }
 
         /// <summary>
+        /// The information text in HTML form
+        /// </summary>
+        public string InfoHtml { get; set; }
+
+        /// <summary>
         /// Position where the information text will be rendered.
         /// </summary>
         public ScreenPositions ScreenPosition { get; set; }
@@ -126,6 +131,7 @@ namespace Ventajou.WPInfo
             HorizontalMargin = 30;
             VerticalMargin = 30;
             InfoText = string.Empty;
+            InfoHtml = "<html><body><p>Start Here</p></body></html>";
             ScreenPosition = ScreenPositions.BottomRight;
             BackgroundColor = SerializableColor.FromColor(Color.White);
             OutputDepth = OutputDepths.CurrentDepth;
