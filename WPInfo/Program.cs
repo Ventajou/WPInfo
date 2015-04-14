@@ -38,8 +38,6 @@ namespace Ventajou.WPInfo
         {
             Settings = new ProgramSettings();
 
-            //System.Threading.Thread.Sleep(30000);
-
             Parameters parameters = new Parameters();
             try
             {
@@ -93,6 +91,7 @@ namespace Ventajou.WPInfo
                 Application.SetCompatibleTextRenderingDefault(false);
                 MainForm mf = new MainForm();
                 if (fileLoaded) mf.FileName = parameters.LoadFile;
+                if (ForcedResolution != Size.Empty) mf.Resolution = ForcedResolution;
                 Application.Run(mf);
             }
         }
@@ -224,11 +223,6 @@ namespace Ventajou.WPInfo
 
             renderForm.RenderLayers();
 
-            // Use the size from the form, which means we don't need to calculate screen sizes etc all over again
-            // We might not need this, we should be able to use Output natively since it should be the right size!
-            //Size finalRes = renderForm.Resolution;
-
-            //Bitmap b = new Bitmap(renderForm.Output, finalRes.Width, finalRes.Height);
             Bitmap b = renderForm.Output;
             // TODO: Selectable image format (at least BMP/JPG/PNG)
             b.Save(destinationPath, ImageFormat.Bmp);

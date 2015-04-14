@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+// It appears this is no longer needed since we're using Regex to replace the MSHTML sizes with point sizes
+
 namespace Ventajou.WPInfo
 {
     public static class String_Replace

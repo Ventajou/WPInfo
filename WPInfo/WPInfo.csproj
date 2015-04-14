@@ -110,7 +110,9 @@
     <Compile Include="Settings\Tokens.cs" />
     <Compile Include="Settings\WMIQuery.cs" />
     <Compile Include="Settings\WSHScript.cs" />
-    <Compile Include="String_Replace.cs" />
+    <Compile Include="String_Replace.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TextMarginsForm.cs">
       <SubType>Form</SubType>
     </Compile>

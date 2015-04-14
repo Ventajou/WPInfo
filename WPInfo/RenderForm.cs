@@ -22,22 +22,27 @@ namespace Ventajou.WPInfo
     /// </summary>
     public partial class RenderForm : Form
     {
-        // This control is used to render the text
-        ///*Transparent*/RichTextBox _irtb;
-
         // Path to the executable, used to resolve relative paths
         private string _appPath;
 
-        public System.Drawing.Size Resolution;
-        public Bitmap Output;
         private ImageModes iMode = Program.Settings.ImageMode;
 
+        public System.Drawing.Size Resolution { get; set; }
+        public Bitmap Output { get; set; }
+
+        /// <summary>
+        /// Default constructor - use screen (well, Primary Screen) size as resolution
+        /// </summary>
         public RenderForm()
         {
             InitializeComponent();
             Resolution = Screen.PrimaryScreen.Bounds.Size;
         }
 
+        /// <summary>
+        /// Supplemental constructor - use provided screen resolution as forced resolution
+        /// </summary>
+        /// <param name="ForceRes"></param>
         public RenderForm(System.Drawing.Size ForceRes)
         {
             InitializeComponent();
@@ -65,48 +70,6 @@ namespace Ventajou.WPInfo
             backgroundPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             backgroundPictureBox.Image = Output;
         }
-
-        /// <summary>
-        /// Called when the rich text box's content has been modified
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TextBoxContentsResized(object sender, ContentsResizedEventArgs e)
-        //{
-        //    // Resizing the RichTextBox according to its content
-        //    // The width is hard coded at 500px for now
-        //    //_irtb.Size = new Size(500, e.NewRectangle.Size.Height);
-
-        //    // Revised based on http://stackoverflow.com/questions/11906932/size-richtextbox-according-to-contents
-        //    // Problem is it's never called AFTER the tokens are replaced - apparently that doesn't trigger the event
-        //    RichTextBox rTB = (RichTextBox)sender;
-        //    rTB.Width = e.NewRectangle.Width;
-        //    rTB.Height = e.NewRectangle.Height;
-
-        //    int height = Program.Settings.IgnoreTaskBar ? Resolution.Height : Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.Bounds.Top;
-
-        //    // Forcing a resolution overrides the IgnoreTaskBar setting ... after all you've forced the resolution,
-        //    // why second-guess the command line?
-        //    if (ResolutionForced)
-        //        height = Resolution.Height;
-
-        //    // adjusting the RichTextBox location based on the user defined screen position
-        //    switch (Program.Settings.ScreenPosition)
-        //    {
-        //        case ScreenPositions.TopLeft:
-        //            _irtb.Location = new Point(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin);
-        //            break;
-        //        case ScreenPositions.TopRight:
-        //            _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), Program.Settings.VerticalMargin);
-        //            break;
-        //        case ScreenPositions.BottomLeft:
-        //            _irtb.Location = new Point(Program.Settings.HorizontalMargin, height - (_irtb.Height + Program.Settings.VerticalMargin));
-        //            break;
-        //        case ScreenPositions.BottomRight:
-        //            _irtb.Location = new Point(Resolution.Width - (_irtb.Width + Program.Settings.HorizontalMargin), height - (_irtb.Height + Program.Settings.VerticalMargin));
-        //            break;
-        //    }
-        //}
 
         /// <summary>
         /// Called when the mouse button is pressed
@@ -236,8 +199,8 @@ namespace Ventajou.WPInfo
             int screenWidth = Resolution.Width;
             int screenHeight = Resolution.Height;
             double screenAR = ((double)screenWidth) / ((double)screenHeight);
-            int bestWidth = int.MaxValue, bestARWidth = int.MaxValue;
-            int bestHeight = int.MaxValue, bestARHeight = int.MaxValue;
+            int bestWidth = int.MaxValue, bestARWidth = int.MaxValue, biggestARWidth = 0;
+            int bestHeight = int.MaxValue, bestARHeight = int.MaxValue, biggestARHeight = 0;
             string bestImageName = null, biggestImage = null, bestARImageName = null;
             int maxWidth = 0;
             int maxHeight = 0;
@@ -279,7 +242,7 @@ namespace Ventajou.WPInfo
                         // Or maybe it's the right Aspect, and the biggest one SMALLER than the screen?
                         else if ((Math.Abs(imageAR - screenAR) < 0.02)         // Comparing doubles directly is rife with rounding issues
                             && (I.Width < screenWidth) && (I.Height < screenHeight)
-                            && ((I.Width > bestARWidth) || (I.Height > bestARHeight)))
+                            && ((I.Width > biggestARWidth) || (I.Height > biggestARHeight)))
                         {
                             bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
                             bestARImageName = file;
@@ -288,7 +251,7 @@ namespace Ventajou.WPInfo
                         // OK it's not even the SAME AR. If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the smallest larger than screen?
                         else if (Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR))
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(bestAR - screenAR))
                             && (I.Width >= screenWidth) && (I.Height >= screenHeight)
                             && ((I.Width <= bestARWidth) || (I.Height <= bestARHeight)))
                         {
@@ -300,9 +263,9 @@ namespace Ventajou.WPInfo
                         // If we don't already have a best AR that matches the screen, maybe it's close,
                         // and still the biggest smaller than screen?
                         else if (Math.Abs(bestAR - screenAR) < 0.02           // Comparing doubles directly is rife with rounding issues. This allows (e.g.) 1366x768 to match 1600x900
-                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(imageAR - bestAR))
+                            && (Math.Abs(imageAR - screenAR) <= Math.Abs(bestAR - screenAR))
                             && (I.Width < screenWidth) && (I.Height < screenHeight)
-                            && ((I.Width > bestARWidth) || (I.Height > bestARHeight)))
+                            && ((I.Width > biggestARWidth) || (I.Height > biggestARHeight)))
                         {
                             bestARWidth = I.Width; bestARHeight = I.Height; bestAR = imageAR;
                             bestARImageName = file;
