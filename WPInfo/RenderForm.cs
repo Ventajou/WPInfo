@@ -12,6 +12,8 @@ using System.Management;         // Required for WMI support
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Threading;          // Required for Registry support
+using TheArtOfDev.HtmlRenderer.WinForms;
+using System.Drawing.Text;
 
 namespace Ventajou.WPInfo
 {
@@ -126,9 +128,12 @@ namespace Ventajou.WPInfo
         {
             // RTF uses twips as measuring units. We calculate those using the main screen's DPI
             //int twipPerPixel;
-            
+
             // Temporary variable for token replacement
             string sInfo = Program.Settings.InfoHtml;
+
+            // Replace HTML3 sizes with points
+            sInfo = ReplaceSizeTags(sInfo);
 
             //using (Graphics g = CreateGraphics())
             //{
@@ -157,8 +162,8 @@ namespace Ventajou.WPInfo
                 if ((match.Groups[1].Value.IndexOf("[") > 0) && (match.Groups[1].Value.IndexOf("]") > match.Groups[1].Value.IndexOf("[")))
                 {
                     // We have a dynamic object - WMI data, WSH Script or Registry Value, identified by the [...] within the match
-                    string DynamicID = match.Groups[1].Value.Substring(match.Groups[1].Value.IndexOf("[")+1, match.Groups[1].Value.IndexOf("]")-match.Groups[1].Value.IndexOf("[")-1);
-                    switch (match.Groups[1].Value.Substring(0,match.Groups[1].Value.IndexOf("[")))
+                    string DynamicID = match.Groups[1].Value.Substring(match.Groups[1].Value.IndexOf("[") + 1, match.Groups[1].Value.IndexOf("]") - match.Groups[1].Value.IndexOf("[") - 1);
+                    switch (match.Groups[1].Value.Substring(0, match.Groups[1].Value.IndexOf("[")))
                     {
                         case TokenIDs.WMIData:
                             tokenValues = ExecWMIQuery(DynamicID);
@@ -207,7 +212,7 @@ namespace Ventajou.WPInfo
                 else if (tokenValues.Length == 1)
                 {
                     // When there is a single value, all we do is replace the token with it
-                  sInfo = tokenRegex.Replace(sInfo, tokenValues[0], 1, match.Index);
+                    sInfo = tokenRegex.Replace(sInfo, tokenValues[0], 1, match.Index);
                 }
 
                 // Find the next token
@@ -399,7 +404,7 @@ namespace Ventajou.WPInfo
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        private string[] ExecWMIQuery (string ID)
+        private string[] ExecWMIQuery(string ID)
         {
             // Find the query in the list of known queries
             WMIQuery W = Program.Settings.WMIQueries.Find(WMIQuery => WMIQuery.Name == ID);
@@ -458,7 +463,7 @@ namespace Ventajou.WPInfo
         /// </summary>
         /// <param name="ID">The named identifier for the Registry value to be queried</param>
         /// <returns>Array of strings (1+)</returns>
-        private string[] ReadRegistry (string ID)
+        private string[] ReadRegistry(string ID)
         {
             // Find the query information
             Ventajou.WPInfo.RegValue R = Program.Settings.RegValues.Find(RegValue => RegValue.Name == ID);
@@ -564,32 +569,61 @@ namespace Ventajou.WPInfo
                 }
             }
 
-            //// Creating the transparent text box and adding it on top
-            //_irtb = new RichTextBox();
-            //_irtb.Size = new Size(500, 50);
-            //_irtb.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            //_irtb.Name = "InfoRichTextBox";
-            //_irtb.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            //_irtb.ContentsResized += TextBoxContentsResized;
-            //_irtb.DetectUrls = false;
-            //_irtb.Margin = new Padding(0,0,0,0);
-
-            // fill the text box with the information text
-            string infoHtml = SubstituteTokens();
+            // Replace tokens with the correct data for final render
+            string infoHtml = "<html><body>" + SubstituteTokens() + "</body></html>";
 
             // Draw it on the background and we're done
-            // Note this is where the current bugs lie - e.g. horrible AA, box wrong size.
-            //if (Program.Settings.ShowTextBox)
-            //{
-            //    Brush b = new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.R, Program.Settings.BackgroundColor.G, Program.Settings.BackgroundColor.B));
-            //    backgroundGraphics.FillRectangle(b, new Rectangle(_irtb.Location, _irtb.Size));
-            //}
-            //backgroundGraphics.DrawRtfText(_irtb.Rtf, new Rectangle(_irtb.Location, _irtb.Size));
+            SizeF BoxSize = HtmlRender.Measure(backgroundGraphics, infoHtml);
+            PointF BoxPos = new PointF();
+            switch (Program.Settings.ScreenPosition)
+            {
+                case ScreenPositions.TopLeft:     BoxPos = new PointF(Program.Settings.HorizontalMargin, Program.Settings.VerticalMargin); break;
+                case ScreenPositions.TopRight:    BoxPos = new PointF(Output.Width - Program.Settings.HorizontalMargin - BoxSize.Width, Program.Settings.VerticalMargin); break;
+                case ScreenPositions.BottomLeft:  BoxPos = new PointF(Program.Settings.HorizontalMargin, Output.Height - Program.Settings.VerticalMargin - BoxSize.Height); break;
+                case ScreenPositions.BottomRight: BoxPos = new PointF(Output.Width - Program.Settings.HorizontalMargin - BoxSize.Width, Output.Height - Program.Settings.VerticalMargin - BoxSize.Height); break;
+            }
+            if (Program.Settings.ShowTextBox)
+            {
+                // Size and location of this is fine
+                backgroundGraphics.FillRectangle(new SolidBrush(Color.FromArgb(Program.Settings.TextBoxOpacity, Program.Settings.BackgroundColor.ToColor())),
+                                                 new Rectangle((int)BoxPos.X, (int)BoxPos.Y, (int)BoxSize.Width, (int)BoxSize.Height));
+            }
 
-            
-
+            // Here be dragons. If you attempt to ensure the final size, and it's not placed top-left, it just vanishes.
+            // No obvious reason. But who cares, it works otherwise!
+            Size BoxEndPos = new Size(0, 0);
+            HtmlRender.RenderToImage(Output, infoHtml, BoxPos, BoxEndPos);
         }
 
+        /// <summary>
+        /// Translate HTML3 sizes (1 through 7) as used by MSHTML editor to arbitrarily selected point sizes
+        /// that the HTML rendering library can comprehend. This could be config-based later once rendering
+        /// actually works to put the text in the right place on the image
+        /// </summary>
+        /// <param name="s">HTML string with constructs such as "FONT SIZE=3"</param>
+        /// <returns>Updated HTML string with SIZE=XXpt instead</returns>
+        private string ReplaceSizeTags (string s)
+        {
+            Regex regexSizes = new Regex("size=[\\\"]*(\\d+)[\\\"]*([ \\>])", RegexOptions.IgnoreCase);
+            Match match = regexSizes.Match(s);
+
+            while (match.Success)
+            // We loop over tokens in order of appearance in the text, this ensures the indentation can be correctly calculated for multi-line values
+            {
+                switch (match.Groups[1].Value)
+                {
+                    case "1": s = regexSizes.Replace(s, "SIZE=6pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                    case "2": s = regexSizes.Replace(s, "SIZE=8pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                    case "3": s = regexSizes.Replace(s, "SIZE=10pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                    case "4": s = regexSizes.Replace(s, "SIZE=12pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                    case "5": s = regexSizes.Replace(s, "SIZE=16pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                    case "6": s = regexSizes.Replace(s, "SIZE=24pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                    case "7": s = regexSizes.Replace(s, "SIZE=32pt" + match.Groups[2].Captures[0].Value, 1, match.Index); break;
+                }
+                match = regexSizes.Match(s, match.Index);
+            }
+            return s;
+        }
         #endregion
     }
 }

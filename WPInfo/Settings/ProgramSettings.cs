@@ -131,7 +131,7 @@ namespace Ventajou.WPInfo
             HorizontalMargin = 30;
             VerticalMargin = 30;
             InfoText = string.Empty;
-            InfoHtml = "<html><body><p>Start Here</p></body></html>";
+            InfoHtml = "<p></p>";
             ScreenPosition = ScreenPositions.BottomRight;
             BackgroundColor = SerializableColor.FromColor(Color.White);
             OutputDepth = OutputDepths.CurrentDepth;

@@ -73,11 +73,12 @@ namespace Ventajou.WPInfo
 
             if (!string.IsNullOrEmpty(parameters.Resolution))
             {
-                Regex Validator = new Regex("^\\d*x\\d*$");       // Digits x digits - Width x Height
+                Regex Validator = new Regex("(^\\d*)x(\\d*)$");       // Digits x digits - Width x Height
                 if (Validator.IsMatch(parameters.Resolution))
                 {
-                    int W = Int32.Parse(parameters.Resolution.Substring(0, parameters.Resolution.IndexOf('x')));
-                    int H = Int32.Parse(parameters.Resolution.Substring(parameters.Resolution.IndexOf('x') + 1, parameters.Resolution.Length - parameters.Resolution.IndexOf('x') - 1));
+                    Match m = Validator.Match(parameters.Resolution);
+                    int W = Int32.Parse(m.Groups[1].Captures[0].ToString());
+                    int H = Int32.Parse(m.Groups[2].Captures[0].ToString());
                     ForcedResolution = new System.Drawing.Size(W, H);
                 }
             }
@@ -90,7 +91,9 @@ namespace Ventajou.WPInfo
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm());
+                MainForm mf = new MainForm();
+                if (fileLoaded) mf.FileName = parameters.LoadFile;
+                Application.Run(mf);
             }
         }
 
@@ -176,8 +179,7 @@ namespace Ventajou.WPInfo
 
         public static string WrapTokenKey(string key)
         {
-          // Ah crap, with HTML we can't use this any more!
-          return Tokens.TokenLeft + key + Tokens.TokenRight;
+            return Tokens.TokenLeft + key + Tokens.TokenRight;
         }
 
         //public static Bitmap CaptureWindow(Form form)

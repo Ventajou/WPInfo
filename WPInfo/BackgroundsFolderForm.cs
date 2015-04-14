@@ -21,7 +21,7 @@ namespace Ventajou.WPInfo
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void EnableBackgroundsFolder(object sender, EventArgs e)
         {
-            backgroundsFolderButton.Enabled = 
+            backgroundsFolderButton.Enabled =
                 backgroundsFolderTextBox.Enabled =
                 showBoxCheckBox.Enabled =
                 opacityTrackBar.Enabled = useFolderCheckBox.Checked;
