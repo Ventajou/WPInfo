@@ -1,7 +1,8 @@
 WPInfo
 -
 
-[![Build status](https://ci.appveyor.com/api/projects/status/mqq9n9lcsq19kpru/branch/master?svg=true)](https://ci.appveyor.com/project/Ventajou/wpinfo/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/mqq9n9lcsq19kpru/branch/master?svg=true&passingText=master%20-%20passing&pendingText=master%20-%20pending&failingText=master%20-%20failing)](https://ci.appveyor.com/project/Ventajou/wpinfo/branch/master)
+[![Branch status](https://ci.appveyor.com/api/projects/status/mqq9n9lcsq19kpru/branch/HTMLEdit%2BRender?svg=true&passingText=HTML%20branch%20-%20passing&pendingText=HTML%20branch%20-%20pending&failingText=HTML%20branch%20-%20failing)](https://ci.appveyor.com/project/Ventajou/wpinfo/branch/HTMLEdit%2BRender)
 [![Join the chat at https://gitter.im/Ventajou/WPInfo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Ventajou/WPInfo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 WPInfo displays system information on the Windows wallpaper. It works similarly to BGInfo from SysInternals but it adds a few unique features:
