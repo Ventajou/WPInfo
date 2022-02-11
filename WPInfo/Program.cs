@@ -228,7 +228,24 @@ namespace Ventajou.WPInfo
             //Bitmap b = new Bitmap(renderForm.Output, finalRes.Width, finalRes.Height);
             Bitmap b = renderForm.Output;
             // TODO: Selectable image format (at least BMP/JPG/PNG)
-            b.Save(destinationPath, ImageFormat.Bmp);
+            int quality = 100;
+            var encoderParameters = new EncoderParameters(1);
+            encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            ImageCodecInfo encoder = null;
+            string extension = "*" + Path.GetExtension(destinationPath).ToUpper();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (new List<string>(codec.FilenameExtension.Split(new char[] { ';' })).Contains(extension))
+                {
+                    encoder = codec;
+                }
+            }
+            if (encoder == null)
+            {
+                throw new ArgumentException(String.Format("Unable to save result to {0}, unknown format ({1})", Settings.OutputFileName, extension));
+            }
+            b.Save(destinationPath, encoder, encoderParameters);
 
             renderForm.Close();
 
